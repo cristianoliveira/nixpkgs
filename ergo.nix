@@ -2,7 +2,7 @@
 { pkgs, fetchFromGitHub, buildGoModule, ... }:
 
 let 
-  _version = "v0.3.2";
+  _version = "develop";
 in
   buildGoModule rec {
     # name of our derivation

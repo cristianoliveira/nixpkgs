@@ -1,5 +1,5 @@
 {
-  description = "My custom packages for Nix";
+  description = "Cristian Oliveira's packages";
 
   inputs.nixpkgs.url = "github:nixos/nixpkgs";
 
@@ -13,6 +13,7 @@
         {
           packages."${system}" = {
             ergo = pkgs.callPackage ./ergo.nix {};
+            funzzy = pkgs.callPackage ./funzzy.nix {};
           };
         }
       ) systems;

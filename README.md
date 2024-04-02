@@ -1,6 +1,6 @@
-# nixpkgs
+# [C]ristian [O]liveira nixpkgs
 
-My collection of nix packages to install my packages on any machine.
+My collection of packages distributed as a nix flake.
 
 ## Usage
 
@@ -11,29 +11,30 @@ Using nix flakes
 
   inputs = { 
     nixpkgs.url = "github:NixOS/nixpkgs";
-    mypkgs = {
+    conixpkgs = {
       url = "github:cristianoliveira/nixpkgs";
       flake = false;
     };
   };
 
-  outputs = { self, nixpkgs, mypkgs, ... }:
+  outputs = { self, nixpkgs, conixpkgs, ... }:
   { 
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         ({ config, pkgs, ... }: { 
-         # Injects mypkgs into nixpkgs as custom
-         # and then can be referenced as `pkgs.custom.ergo`
+         # Injects conixpkgs into nixpkgs as "co"
+         # and then can be referenced as `pkgs.co.ergo`
          nixpkgs.overlays = [ 
-            (final: prev: { custom = import mypkgs { inherit pkgs; }; })
+            (final: prev: { co = import conixpkgs { inherit pkgs; }; })
           ];
         })
 
-        # Exemplo of installing a package from mypkgs
+        # Exemplo of installing a package from conixpkgs
         ({ config, pkgs, ... }: {
           environment.systemPackages = [
-            pkgs.custom.ergo
+            pkgs.co.ergo
+            pkgs.co.funzzy
           ];
         })
       ];
@@ -45,3 +46,4 @@ Using nix flakes
 ## Packages available
 
 - [ergo](https://github.com/cristianoliveira/ergo) - A reverse proxy agent for local domain management add subdomains to localhost
+- [funzzy](https://github.com/cristianoliveira/funzzy) - A lightweight watcher that runs command when files change.

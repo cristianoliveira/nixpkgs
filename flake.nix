@@ -5,6 +5,8 @@
 
   outputs = { self, nixpkgs, ... }:
     let
+      lib = nixpkgs.lib;
+      recursiveMergeAttrs = listOfAttrsets: lib.fold (attrset: acc: lib.recursiveUpdate attrset acc) {} listOfAttrsets;
       systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" ];
 
       systemPackages = map (system:
@@ -15,9 +17,7 @@
           packages."${system}" = import ./default.nix { inherit pkgs; };
         }
       ) systems;
-
-      mergeAttrs = attrs: builtins.foldl' (a: b: a // b) {} attrs;
     in
-      # Reduce the list of packages into a single attribute set
-      mergeAttrs systemPackages;
+      # Reduce the list of packages of packages into a single attribute set
+      recursiveMergeAttrs(systemPackages);
 }

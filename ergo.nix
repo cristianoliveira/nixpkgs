@@ -14,11 +14,13 @@ in
       owner = "cristianoliveira";
       repo = "ergo";
       rev = _version;
-      sha256 = "sha256-C3lJWuRyGuvo33kvj3ktWKYuUZ2yJ8pDBNX7YZn6wNM=";
+      sha256 = "sha256-6okV4GOqlioJ1BTu2no8QrSo9l/a9LV4NgzM7Es5Hbc=";
     };
 
     modSha256 = "0fagi529m1gf5jrqdlg9vxxq4yz9k9q8h92ch0gahp43kxfbgr4q";
 
+    # When changing the version update this tag with new hash
+    # use `make check-default` to discover the new hash
     vendorHash = "sha256-yXWM59zoZkQPpOouJoUd5KWfpdCBw47wknb+hYy6rh0=";
 
     ldflags = [

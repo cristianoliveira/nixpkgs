@@ -15,6 +15,8 @@
         in
         {
           packages."${system}" = import ./default.nix { inherit pkgs; };
+          overlays.default = _: prev: import ./default.nix { inherit pkgs; };
+
         }
       ) systems;
     in

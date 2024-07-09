@@ -4,9 +4,30 @@
 # list here all the events and the commands that it should execute
 
 - name: check flake
-  run: 'make check-flake'
+  run_on_init: true
+  run: 
+    - 'nix flake check --show-trace'
+    ## if fails touch file to trigger next workflow
+    - 'make build-all || echo 1 > hash.log'
   change: '*.nix'
+
+- name: build all and log
+  run: 
+    - rm -rf ergo.log fzz.log
+    - make build-ergo 2> ergo.log || nvim ergo.log
+    - make build-fzz 2> fzz.log || nvim fzz.log
+  change: 'hash.log'
 
 - name: check default
   run: 'make check-default'
   change: '*.nix'
+
+- name: stage files to git
+  run: 
+    - git add {{relative_filepath}}
+    - git add -p
+  change: 
+    - '*.nix'
+    - '.watch.yaml'
+    - 'Makefile'
+    - 'README.md'

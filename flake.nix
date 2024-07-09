@@ -14,9 +14,8 @@
           pkgs = import nixpkgs { inherit system; };
         in
         {
-          packages."${system}" = import ./default.nix { inherit pkgs; };
-          overlays.default = _: prev: import ./default.nix { inherit pkgs; };
-
+          packages."${system}" = import ./pkgs/default.nix { inherit pkgs; };
+          overlays.default = _: prev: import ./pkgs/default.nix { inherit pkgs; };
         }
       ) systems;
     in

@@ -33,7 +33,7 @@ Using nix flakes
         # Exemplo of installing a package from conixpkgs
         ({ config, pkgs, ... }: {
           environment.systemPackages = [
-            pkgs.co.ergo
+            pkgs.co.ergoProxy
             pkgs.co.funzzy
           ];
         })

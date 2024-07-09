@@ -19,3 +19,13 @@ PHONY: build-fzz
 build-fzz:
 	@nix build .#funzzy
 	@nix build .#fzzNightly
+
+PHONY: bump-fzz
+bump-fzz:
+	@sed -i '' 's/sha256-.*=//g' pkgs/funzzy.nix
+	@sed -i '' 's/sha256-.*=//g' pkgs/funzzy-nightly.nix
+
+PHONY: bump-ergo
+bump-ergo:
+	@sed -i '' 's/sha256-.*=//g' pkgs/ergo-proxy.nix
+	@sed -i '' 's/sha256-.*=//g' pkgs/ergo-proxy-nightly.nix

@@ -7,16 +7,17 @@
   run_on_init: true
   run: 
     - 'nix flake check --show-trace'
-    ## if fails touch file to trigger next workflow
-    - 'make build-all || echo 1 > hash.log'
+    ## if fails touch file to trigger next task
+    - 'make build-all || touch hash-generate.tsk'
   change: '*.nix'
 
-- name: build all and log
+- name: regenerate generate hashes
   run: 
-    - rm -rf ergo.log fzz.log
+    - rm -rf *.log
     - make build-ergo 2> ergo.log || nvim ergo.log
     - make build-fzz 2> fzz.log || nvim fzz.log
-  change: 'hash.log'
+    - rm -rf *.log
+  change: 'hash-generate.tsk'
 
 - name: check default
   run: 'make check-default'

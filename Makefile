@@ -7,10 +7,8 @@ check-flake:
 	@nix flake check --all-systems
 
 PHONY: build-all
-build-all:
-	@nix build .#funzzy
-	@nix build .#ergoProxy
-	@nix build .#ergoProxyNightly
+build-all: build-ergo build-fzz
+	echo "All done"
 
 PHONY: build-ergo
 build-ergo:
@@ -20,3 +18,4 @@ build-ergo:
 PHONY: build-fzz
 build-fzz:
 	@nix build .#funzzy
+	@nix build .#fzzNightly

@@ -1,4 +1,5 @@
 # [C]ristian [O]liveira nixpkgs
+[![periodic nixbuild](https://github.com/cristianoliveira/nixpkgs/actions/workflows/on-schedule-nixbuild.yml/badge.svg)](https://github.com/cristianoliveira/nixpkgs/actions/workflows/on-schedule-nixbuild.yml)
 
 My collection of packages distributed as a nix flake.
 

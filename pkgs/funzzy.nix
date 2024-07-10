@@ -1,16 +1,21 @@
 { lib , rustPlatform , fetchFromGitHub , stdenv , darwin }:
   rustPlatform.buildRustPackage rec {
     pname = "funzzy";
-    version = "1.3.0";
+    version = "1.4.0";
 
     src = fetchFromGitHub {
       owner = "cristianoliveira";
       repo = "funzzy";
-      rev = "master";
-      hash = "sha256-YjA/XxVB8gGxyLovxTTatSC/ESBCkgz7Not0qfEPxtw=";
+      rev = "v${version}";
+      hash = "sha256-7rCqz7os9N7R7s3+hAqAafJFa/rLsKdddx4crp93Hzo=";
     };
 
-    cargoHash = "sha256-fwKVw+iQ0dS93ozmfVW3nx1vBWlYseXeNh9GKOHvcmQ=";
+    cargoHash = "sha256-o/Mr3AEYBDzRz4hWjR/Dy9X4PiQ7kc1YaexYnr2AuW4=";
+
+    # When installing from source only run unit tests
+    checkPhase = ''
+      cargo test $UNIT_TEST --lib
+    '';
 
     buildInputs = lib.optionals stdenv.isDarwin [
       darwin.apple_sdk.frameworks.CoreServices
@@ -24,4 +29,3 @@
       maintainers = with maintainers; [ cristianoliveira ];
     };
   }
-

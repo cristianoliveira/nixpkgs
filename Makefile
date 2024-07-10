@@ -17,8 +17,8 @@ build-ergo:
 
 PHONY: build-fzz
 build-fzz:
-	@nix build .#funzzy
-	@nix build .#fzzNightly
+	@nix build .#fzzNightly --verbose
+	@nix build .#funzzy --verbose
 
 PHONY: bump-fzz
 bump-fzz:

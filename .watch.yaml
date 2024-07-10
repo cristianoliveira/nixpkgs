@@ -3,6 +3,19 @@
 #
 # list here all the events and the commands that it should execute
 
+# Conditional task
+- name: stage files to git
+  run_on_init: true
+  run: 
+    - git add {{relative_filepath}}
+    - git add -p
+  change: 
+    - '.fzz/on_success.evt'
+    - '*.nix'
+    - '.watch.yaml'
+    - 'Makefile'
+    - 'README.md'
+
 - name: check flake
   run_on_init: true
   run: 
@@ -23,12 +36,18 @@
   run: 'make check-default'
   change: '*.nix'
 
-- name: stage files to git
+# - name: All checks pass
+#   run: 'touch .fzz/on_success.evt'
+#   change:
+#     - '**/*'
+#   ignore:
+#     - '.fzz/**'
+#     - '.git/**'
+
+- name: rebase to git
+  run_on_init: true
   run: 
-    - git add {{relative_filepath}}
-    - git add -p
+    - git fetch --all
+    - git rebase origin/main
   change: 
-    - '*.nix'
-    - '.watch.yaml'
-    - 'Makefile'
-    - 'README.md'
+    - '.git/COMMIT_EDITMSG'

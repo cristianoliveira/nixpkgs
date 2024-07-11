@@ -26,10 +26,10 @@
 
 - name: regenerate generate hashes
   run: 
-    - rm -rf *.log
+    - rm -rf *.log || echo nothing
     - make build-ergo 2> ergo.log || nvim ergo.log
     - make build-fzz 2> fzz.log || nvim fzz.log
-    - rm -rf *.log
+    - rm -rf *.log || echo nothing
   change: 'hash-generate.tsk'
 
 - name: check default

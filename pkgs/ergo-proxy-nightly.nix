@@ -12,7 +12,7 @@
         owner = "cristianoliveira";
         repo = "ergo";
         rev = _version;
-        sha256 = "sha256-TkAv4064b2LNbVx6u04fNdL9WH8ycOHchOcMLbbCgVo=";
+        sha256 = "sha256-q7MZ8i5ezTRj5XUYmPqNO0iCE3Iu1KNCr4SPhjYFylY=";
       };
 
       modSha256 = "sha256-yXWM59zoZkQPpOouJoUd5KWfpdCBw47wknb+hYy6rh0=";

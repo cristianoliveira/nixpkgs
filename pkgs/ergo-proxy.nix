@@ -17,7 +17,7 @@ in
       sha256 = "sha256-/VhHuJsQrxewmfP/V25r5rZady0snfYNOGyIrv3vpGA=";
     };
 
-    modSha256 = "sha256-TkAv4064b2LNbVx6u04fNdL9WH8ycOHchOcMLbbCgVo=";
+    modSha256 = "sha256-yXWM59zoZkQPpOouJoUd5KWfpdCBw47wknb+hYy6rh0=";
 
     vendorHash = "sha256-yXWM59zoZkQPpOouJoUd5KWfpdCBw47wknb+hYy6rh0=";
 

@@ -14,5 +14,6 @@ jobs:
       - uses: cachix/install-nix-action@v27
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-
       - run: make build-all
+      - run: make install-funzzy
+      - run: make install-ergo

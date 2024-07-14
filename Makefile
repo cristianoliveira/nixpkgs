@@ -29,3 +29,19 @@ PHONY: bump-ergo
 bump-ergo:
 	@sed -i '' 's/sha256-.*=//g' pkgs/ergo-proxy.nix
 	@sed -i '' 's/sha256-.*=//g' pkgs/ergo-proxy-nightly.nix
+
+PHONY: install-funzzy
+install-funzzy:
+	@nix profile install 'github:cristianoliveira/nixpkgs#funzzy'
+
+PHONY: install-funzzy-nightly
+install-funzzy-nightly:
+	@nix profile install 'github:cristianoliveira/nixpkgs#funzzyNightly'
+
+PHONY: install-ergo
+install-ergo:
+	@nix profile install 'github:cristianoliveira/nixpkgs#ergoProxy'
+
+PHONY: install-ergo-nightly
+install-ergo-nightly:
+	@nix profile install 'github:cristianoliveira/nixpkgs#ergoProxyNightly'

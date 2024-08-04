@@ -7,7 +7,7 @@
       owner = "cristianoliveira";
       repo = "funzzy";
       rev = "v${version}";
-      hash = "sha256-3hxueGfqOVmUlHIQ5xwtdE4ku4LszQm2G85V3UXvilI=";
+      hash = "sha256-7rCqz7os9N7R7s3+hAqAafJFa/rLsKdddx4crp93Hzo=";
     };
 
     cargoHash = "sha256-o/Mr3AEYBDzRz4hWjR/Dy9X4PiQ7kc1YaexYnr2AuW4=";

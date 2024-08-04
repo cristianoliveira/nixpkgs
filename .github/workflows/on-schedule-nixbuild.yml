@@ -14,7 +14,7 @@ jobs:
       - uses: cachix/install-nix-action@v27
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check installing pkgs
+      - name: Check build pkgs
         run: 
-          make install-funzzy 
-          make install-ergo
+          make build-fzz 
+          make build-ergo

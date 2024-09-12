@@ -36,10 +36,6 @@ bump-ergo: ## Bump ergoProxy and ergoProxyNightly
 	sed -i '' 's/sha256-.*=//g' pkgs/ergo-proxy.nix
 	sed -i '' 's/sha256-.*=//g' pkgs/ergo-proxy-nightly.nix
 
-PHONY: bump-snipgpt
-bump-snipgpt: ## Bump funzzy and funzzyNightly
-	sed -i '' 's/sha256-.*=//g' pkgs/snipgpt.nix
-
 PHONY: install-funzzy
 install-funzzy: ## Install funzzy
 	nix profile install 'github:cristianoliveira/nixpkgs#funzzy'

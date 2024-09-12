@@ -6,8 +6,6 @@
     ergoProxyNightly = pkgs.callPackage ./ergo-proxy-nightly.nix { };
     ergoProxy = pkgs.callPackage ./ergo-proxy.nix {};
 
-    snipgpt = pkgs.callPackage ./snipgpt.nix {};
-
     # too many aliases
     funzzy = funzzy;
     fzz = funzzy;

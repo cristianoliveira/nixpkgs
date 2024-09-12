@@ -14,7 +14,7 @@
           pkgs = import nixpkgs { inherit system; };
         in
         {
-          packages."${system}" = import ./pkgs/default.nix { inherit pkgs; };
+          packages."${system}" = import ./default.nix { inherit pkgs; };
         }
       ) systems;
     in

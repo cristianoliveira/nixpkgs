@@ -7,10 +7,10 @@
       owner = "cristianoliveira";
       repo = "funzzy";
       rev = "master";
-      hash = "sha256-1EJmlQFyRqJ+UdX0FWJLhRNjcAwrWXTWVhbzxNAY2+g=";
+      hash = "sha256-NzO6vAyVQlocIXitZkLPd1b9IujbmOfzUA1AXlAJLrg=";
     };
 
-    cargoHash = "sha256-2xBYYrvEVrG9iwK/dp88WCQLQmB8naDBywXqIKDw92o=";
+    cargoHash = "sha256-Rs0l7361BtuhV0DsMfeyKe/ryoCZaLWBnrpuVNeRKhU=";
 
     # When installing from source only run unit tests
     checkPhase = ''

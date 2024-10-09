@@ -1,23 +1,19 @@
 {
   description = "Cristian Oliveira's packages";
 
-  inputs.nixpkgs.url = "github:nixos/nixpkgs";
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs";
+    utils.url = "github:numtide/flake-utils";
+  };
 
-  outputs = { self, nixpkgs, ... }:
-    let
-      lib = nixpkgs.lib;
-      recursiveMergeAttrs = listOfAttrsets: lib.fold (attrset: acc: lib.recursiveUpdate attrset acc) {} listOfAttrsets;
-      systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+  outputs = { self, nixpkgs, utils, ... }:
+    utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = import nixpkgs { inherit system; };
+        srcpkgs = import ./default.nix { inherit pkgs; };
+      in {
+        packages = srcpkgs;
 
-      systemPackages = map (system:
-        let
-          pkgs = import nixpkgs { inherit system; };
-        in
-        {
-          packages."${system}" = import ./default.nix { inherit pkgs; };
-        }
-      ) systems;
-    in
-      # Reduce the list of packages of packages into a single attribute set
-      recursiveMergeAttrs(systemPackages);
+        devShells.default = pkgs.callPackage ./shell.nix { inherit pkgs srcpkgs; };
+    });
 }

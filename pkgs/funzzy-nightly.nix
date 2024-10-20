@@ -7,15 +7,10 @@
       owner = "cristianoliveira";
       repo = "funzzy";
       rev = "master";
-      hash = "sha256-NzO6vAyVQlocIXitZkLPd1b9IujbmOfzUA1AXlAJLrg=";
+      hash = "sha256-1rgxByU9MSMV2hCbzclLT8QtKn1woc5ONQQ5FmPuW1M=";
     };
 
-    cargoHash = "sha256-Rs0l7361BtuhV0DsMfeyKe/ryoCZaLWBnrpuVNeRKhU=";
-
-    # When installing from source only run unit tests
-    checkPhase = ''
-      cargo test $UNIT_TEST --lib
-    '';
+    cargoHash = "sha256-qhUDXtI6TyQUGMDcHYTC1nS9AQA2bYQsg3qNY5rlWPU=";
 
     buildInputs = lib.optionals stdenv.isDarwin [
       darwin.apple_sdk.frameworks.CoreServices

@@ -7,10 +7,10 @@
       owner = "cristianoliveira";
       repo = "funzzy";
       rev = "master";
-      hash = "sha256-lGJcZw80u8nVBSKZJMGSpCoSFX9FTfH4QSmzweR6x2I=";
+      hash = "sha256-ZwQwGaFxhJT4ftJ4PLQ+qj4h5/6OnftT43KeJg48YCo=";
     };
 
-    cargoHash = "sha256-qhUDXtI6TyQUGMDcHYTC1nS9AQA2bYQsg3qNY5rlWPU=";
+    cargoHash = "sha256-mT7uyCy/UU/azKUUcl/0X9qnK/8JWeLduhAb5cdyI48=";
 
     buildInputs = lib.optionals stdenv.isDarwin [
       darwin.apple_sdk.frameworks.CoreServices

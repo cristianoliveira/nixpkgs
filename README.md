@@ -14,7 +14,7 @@ Using nix flakes
     nixpkgs.url = "github:NixOS/nixpkgs";
     conixpkgs = {
       url = "github:cristianoliveira/nixpkgs";
-      flake = false;
+      flake = true;
     };
   };
 
@@ -48,3 +48,4 @@ Using nix flakes
 
 - [ergo](https://github.com/cristianoliveira/ergo) - A reverse proxy agent for local domain management add subdomains to localhost
 - [funzzy](https://github.com/cristianoliveira/funzzy) - A lightweight watcher that runs command when files change.
+- [sway-setter](https://github.com/cristianoliveira/sway-setter) - A cli for loading sway configurations

@@ -27,7 +27,5 @@
           funzzyNightly = funzzyPkgs.nightly;
           fzzNightly = funzzyPkgs.nightly;
         };
-
-        devShells.default = pkgs.callPackage ./shell.nix { inherit pkgs srcpkgs; };
     });
 }

@@ -38,16 +38,17 @@ bump-ergo: ## Bump ergoProxy and ergoProxyNightly
 
 PHONY: install-funzzy
 install-funzzy: ## Install funzzy
-	nix profile install 'github:cristianoliveira/nixpkgs#funzzy'
+	nix profile install 'github:cristianoliveira/nixpkgs#funzzy' --no-write-lock-file
 
 PHONY: install-funzzy-nightly
 install-funzzy-nightly: ## Install funzzyNightly
-	nix profile install 'github:cristianoliveira/nixpkgs#funzzyNightly'
+	nix profile install 'github:cristianoliveira/nixpkgs#funzzyNightly' --no-write-lock-file
 
 PHONY: install-ergo
 install-ergo: ## Install ergoProxy
-	nix profile install 'github:cristianoliveira/nixpkgs#ergoProxy'
+	nix profile install 'github:cristianoliveira/nixpkgs#ergoProxy' --no-write-lock-file
 
 PHONY: install-ergo-nightly
 install-ergo-nightly: ## Install ergoProxyNightly
-	nix profile install 'github:cristianoliveira/nixpkgs#ergoProxyNightly'
+	nix profile install 'github:cristianoliveira/nixpkgs#ergoProxyNightly' --no-write-lock-file
+

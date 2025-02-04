@@ -183,11 +183,11 @@
         "utils": "utils_5"
       },
       "locked": {
-        "lastModified": 1738662365,
-        "narHash": "sha256-JCsXHLJhjDkip5+FbjQyoCh8BEq3hA4vd9JUl2DLWxY=",
+        "lastModified": 1738668583,
+        "narHash": "sha256-TboFIrVg5npUjn495aq2TCZx8LcOAINopHUN1StgmMo=",
         "owner": "cristianoliveira",
         "repo": "sway-setter",
-        "rev": "83063f31dce71163315c018e62ca9efd01fb077c",
+        "rev": "2c4e6169e12e50cc55ed4bfec6056a97c4afd029",
         "type": "github"
       },
       "original": {

@@ -25,7 +25,7 @@
         swaysetterPkgs = import sway-setter { inherit pkgs; };
         funzzyPkgs = import funzzy { inherit pkgs; };
         ergoPkgs = import ergo { inherit pkgs; };
-      in {
+
         packages = {
           # Sway Setter packages
           sway-setter = swaysetterPkgs.nightly;
@@ -37,5 +37,8 @@
           # Ergo packages
           ergoProxy = ergoPkgs.nightly;
         };
+      in {
+        overlays = [(final: prev: { copkgs = packages; })];
+        packages = packages;
     });
 }

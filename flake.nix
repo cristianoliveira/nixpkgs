@@ -28,17 +28,14 @@
       in {
         packages = {
           # Sway Setter packages
-          sway-setter = swaysetterPkgs.default;
+          sway-setter = swaysetterPkgs.nightly;
 
           # Funzzy packages
-          funzzy = funzzyPkgs.default;
-          fzz = funzzyPkgs.default;
-          funzzyNightly = funzzyPkgs.nightly;
-          fzzNightly = funzzyPkgs.nightly;
+          funzzy = funzzyPkgs.nightly;
+          fzz = funzzyPkgs.nightly;
 
           # Ergo packages
-          ergoProxy = ergoPkgs.default;
-          ergoProxyNightly = ergoPkgs.nightly;
+          ergoProxy = ergoPkgs.nightly;
         };
     });
 }

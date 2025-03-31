@@ -8,15 +8,16 @@
     sway-setter.url = "github:cristianoliveira/sway-setter";
     funzzy.url = "github:cristianoliveira/funzzy";
     ergo.url = "github:cristianoliveira/ergo";
+    snipgpt.url = "github:cristianoliveira/snipgpt";
   };
 
   outputs = { 
-    self,
     nixpkgs,
     utils,
     sway-setter,
     funzzy,
     ergo,
+    snipgpt,
     ... 
   }:
     utils.lib.eachDefaultSystem (system:
@@ -25,6 +26,7 @@
         swaysetterPkgs = import sway-setter { inherit pkgs; };
         funzzyPkgs = import funzzy { inherit pkgs; };
         ergoPkgs = import ergo { inherit pkgs; };
+        snipgptPkgs = import snipgpt { inherit pkgs; };
       in {
         packages = {
           # Sway Setter packages
@@ -39,6 +41,9 @@
           # Ergo packages
           ergoProxy = ergoPkgs.default;
           ergoProxyNightly = ergoPkgs.nightly;
+
+          # Snipgpt packages
+          snipgpt = snipgptPkgs;
         };
     });
 }

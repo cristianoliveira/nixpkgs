@@ -9,6 +9,9 @@
     funzzy.url = "github:cristianoliveira/funzzy";
     ergo.url = "github:cristianoliveira/ergo";
     snipgpt.url = "github:cristianoliveira/snipgpt";
+
+    aerospace-scratchpad.url = "github:cristianoliveira/aerospace-scratchpad";
+    aerospace-marks.url = "github:cristianoliveira/aerospace-marks";
   };
 
   outputs = { 
@@ -18,6 +21,8 @@
     funzzy,
     ergo,
     snipgpt,
+    aerospace-scratchpad,
+    aerospace-marks,
     ... 
   }:
     utils.lib.eachDefaultSystem (system:
@@ -27,6 +32,8 @@
         funzzyPkgs = import funzzy { inherit pkgs; };
         ergoPkgs = import ergo { inherit pkgs; };
         snipgptPkgs = import snipgpt { inherit pkgs; };
+        aerospaceScratchpad = import aerospace-scratchpad { inherit pkgs; };
+        aerospaceMarks = import aerospace-marks { inherit pkgs; };
       in {
         packages = {
           # Sway Setter packages
@@ -44,6 +51,10 @@
 
           # Snipgpt packages
           snipgpt = snipgptPkgs;
+
+          # Aerospace packages
+          aerospace-scratchpad = aerospaceScratchpad.default;
+          aerospace-marks = aerospaceMarks.default;
         };
     });
 }

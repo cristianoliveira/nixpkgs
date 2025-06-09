@@ -6,11 +6,11 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1748978715,
-        "narHash": "sha256-G6l3Cqmjq9XcpnUMRVbyo+mXmZEPGpWXRrNzExOEcMY=",
+        "lastModified": 1749486258,
+        "narHash": "sha256-YxaDXh7T+1+ItAPWbVvE9KUGb2FNeZF1RfnHd417+Do=",
         "owner": "cristianoliveira",
         "repo": "aerospace-marks",
-        "rev": "841b4d86bbdfb6408d7c3a922e5e0baffc5d00ed",
+        "rev": "bc5f5120170890d0a87ab8ff4de8325a1386ca13",
         "type": "github"
       },
       "original": {
@@ -25,11 +25,11 @@
         "utils": "utils_2"
       },
       "locked": {
-        "lastModified": 1748978706,
-        "narHash": "sha256-obB1qRZyX85qoHLgr9CkiS5yPNhK0st6SkG3cKlDTLo=",
+        "lastModified": 1749486163,
+        "narHash": "sha256-hl97qZVz6iwMmZ5Z2vROIwKTlYafnPr8hCybl2TvrH4=",
         "owner": "cristianoliveira",
         "repo": "aerospace-scratchpad",
-        "rev": "485f5cee230c08ff4d4e79dc4766229c86b40542",
+        "rev": "deb7bba3f434a8c5aa7c4a81167b50f170e356fe",
         "type": "github"
       },
       "original": {
@@ -189,11 +189,11 @@
     },
     "nixpkgs_7": {
       "locked": {
-        "lastModified": 1748982295,
-        "narHash": "sha256-3k2sEX+rbksq4kwfpJu+G+3zvJEXRI2fubzFI7GwNS4=",
+        "lastModified": 1749486686,
+        "narHash": "sha256-oAa1p5nZGXoZ7iew2nc5jQ+O8c0hGP6b2saKDCDTMzE=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "ada12b769e90e13b1d57e5229587a135e5de9fbe",
+        "rev": "93ae12cf2d3d93b7a822cc6bf48f0e02da1c7c60",
         "type": "github"
       },
       "original": {

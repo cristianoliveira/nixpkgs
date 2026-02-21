@@ -14,7 +14,7 @@
     aerospace-marks.url = "github:cristianoliveira/aerospace-marks";
   };
 
-  outputs = { 
+  outputs = {
     nixpkgs,
     utils,
     sway-setter,
@@ -23,7 +23,8 @@
     snipgpt,
     aerospace-scratchpad,
     aerospace-marks,
-    ... 
+    self,
+    ...
   }:
     utils.lib.eachDefaultSystem (system:
       let
@@ -31,9 +32,11 @@
         swaysetterPkgs = import sway-setter { inherit pkgs; };
         funzzyPkgs = import funzzy { inherit pkgs; };
         ergoPkgs = import ergo { inherit pkgs; };
-        snipgptPkgs = import snipgpt { inherit pkgs; };
         aerospaceScratchpad = import aerospace-scratchpad { inherit pkgs; };
         aerospaceMarks = import aerospace-marks { inherit pkgs; };
+
+        # Import local packages from centralized pkgs/default.nix
+        localPackages = import (self + /pkgs) pkgs;
       in {
         packages = {
           # Sway Setter packages
@@ -49,12 +52,11 @@
           ergoProxy = ergoPkgs.default;
           ergoProxyNightly = ergoPkgs.nightly;
 
-          # Snipgpt packages
-          snipgpt = snipgptPkgs;
-
           # Aerospace packages
           aerospace-scratchpad = aerospaceScratchpad.default;
           aerospace-marks = aerospaceMarks.default;
-        };
+
+          # Local NUR packages
+        } // localPackages;
     });
 }

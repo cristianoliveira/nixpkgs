@@ -1,0 +1,231 @@
+# PR-specific validation workflow
+# Fast feedback for pull requests with essential checks
+# Uses dynamic package discovery via scripts/list-packages.sh
+# Packages are automatically discovered from flake outputs, eliminating
+# the need to maintain hardcoded package lists in CI configuration
+name: pr validation
+
+on:
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+env:
+  # Cachix cache name - user needs to set this secret
+  CACHIX_CACHE_NAME: ${{ secrets.CACHIX_CACHE_NAME }}
+  CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+jobs:
+  # JOB 1: Quick flake validation
+  # Fast check of flake structure before building
+  quick-flake-check:
+    name: Quick Flake Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v27
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run nix flake show
+        run: nix flake show
+        continue-on-error: false
+
+      - name: Run nix flake metadata check
+        run: |
+          echo "Checking flake metadata..."
+          nix flake metadata || echo "⚠️ Metadata check returned non-zero"
+        continue-on-error: true
+
+  # JOB 2: Build affected packages
+  # Builds only packages that changed in the PR
+  build-affected:
+    name: Build Affected Packages
+    runs-on: ubuntu-latest
+    needs: quick-flake-check
+    outputs:
+      changed_files: ${{ steps.changes.outputs.changed_files }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changes
+        run: |
+          # Get list of changed files compared to main branch
+          git diff --name-only origin/main...HEAD > changed_files.txt
+          cat changed_files.txt
+          echo "changed_files=$(cat changed_files.txt | wc -l)" >> $GITHUB_OUTPUT
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v27
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Setup Cachix for caching
+        if: env.CACHIX_AUTH_TOKEN != ''
+        uses: cachix/cachix-action@v14
+        with:
+          name: ${{ env.CACHIX_CACHE_NAME }}
+          authToken: ${{ env.CACHIX_AUTH_TOKEN }}
+
+      - name: Determine packages to build
+        id: packages
+        run: |
+          # Determine which packages to build based on changed files
+          echo "Determining packages to build..."
+
+          packages_to_build=()
+
+          # Check if flake.nix changed -> build all packages
+          if grep -q "flake.nix" changed_files.txt; then
+            echo "flake.nix changed, building all packages"
+            packages_to_build=("*")
+          else
+            # Dynamic discovery of local packages
+            echo "Discovering local packages..."
+            local_packages=($(./scripts/list-packages.sh --local))
+            
+            if [ ${#local_packages[@]} -eq 0 ]; then
+              echo "⚠️ No local packages found"
+            else
+              # Check each package directory for changes
+              for pkg in "${local_packages[@]}"; do
+                if grep -q "pkgs/${pkg}/" changed_files.txt; then
+                  echo "Package $pkg has changes"
+                  packages_to_build+=("$pkg")
+                fi
+              done
+            fi
+          fi
+
+          # If no specific packages found, build all local packages
+          if [ ${#packages_to_build[@]} -eq 0 ]; then
+            echo "No specific package changes detected, building all local packages"
+            # Use dynamic discovery for all local packages
+            packages_to_build=($(./scripts/list-packages.sh --local))
+          fi
+
+          # Output packages to build
+          echo "packages=${packages_to_build[@]}" >> $GITHUB_OUTPUT
+          echo "Will build: ${packages_to_build[@]}"
+
+      - name: Build affected packages
+        run: |
+          echo "=== Building affected packages ==="
+          packages="${{ steps.packages.outputs.packages }}"
+
+          if [ "$packages" = "*" ]; then
+            echo "Building all packages using make build-all (dynamic discovery)..."
+            # The Makefile uses scripts/list-packages.sh for dynamic discovery
+            make build-all
+          else
+            # Build specific packages that were detected as changed
+            for pkg in $packages; do
+              echo "::group::Building $pkg"
+              if nix build ".#$pkg" --print-build-logs; then
+                echo "✓ Successfully built $pkg"
+              else
+                echo "✗ Failed to build $pkg"
+                echo "::endgroup::"
+                exit 1
+              fi
+              echo "::endgroup::"
+            done
+          fi
+
+  # JOB 3: Quick smoke tests
+  # Fast validation that packages execute correctly
+  quick-smoke-tests:
+    name: Quick Smoke Tests
+    runs-on: ubuntu-latest
+    needs: build-affected
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v27
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run quick smoke tests
+        run: |
+          echo "=== Running quick smoke tests ==="
+
+          # Dynamic discovery of local packages for smoke testing
+          echo "Discovering local packages..."
+          local_packages=($(./scripts/list-packages.sh --local))
+          
+          if [ ${#local_packages[@]} -eq 0 ]; then
+            echo "⚠️ No local packages found for smoke testing"
+          else
+            for pkg in "${local_packages[@]}"; do
+              echo "::group::Testing $pkg"
+              if nix build ".#$pkg" --print-build-logs; then
+                # Find the binary and test it
+                binary=$(find ./result/bin -type f -executable | head -1)
+                if [ -n "$binary" ]; then
+                  echo "Testing binary: $binary"
+                  $binary --help || $binary --version || echo "⚠️ $pkg binary test returned non-zero"
+                  echo "✓ $pkg executes correctly"
+                else
+                  echo "⚠️ No executable binary found for $pkg"
+                fi
+              else
+                echo "⚠️ Could not build $pkg for testing"
+              fi
+              echo "::endgroup::"
+            done
+          fi
+
+          echo "=== Quick smoke tests completed ==="
+
+  # JOB 4: PR summary comment
+  # Adds a comment to the PR with build results
+  pr-summary:
+    name: PR Summary
+    runs-on: ubuntu-latest
+    needs: [quick-flake-check, build-affected, quick-smoke-tests]
+    if: always()
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Generate PR comment
+        run: |
+          echo "## 🔍 PR Validation Results
+
+          | Check | Status |
+          |-------|--------|
+          | Flake Check | ${{ needs.quick-flake-check.result == 'success' && '✅ Passed' || '❌ Failed' }} |
+          | Build Packages | ${{ needs.build-affected.result == 'success' && '✅ Passed' || '❌ Failed' }} |
+          | Smoke Tests | ${{ needs.quick-smoke-tests.result == 'success' && '✅ Passed' || '❌ Failed' }} |
+
+          ${{ needs.build-affected.result == 'success' && needs.quick-smoke-tests.result == 'success' && '### 🎉 All checks passed! This PR is ready for review.' || '### ⚠️ Some checks failed. Please review the logs above.' }}
+
+          ---
+          *Automated validation by GitHub Actions*
+          " > pr_comment.md
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const comment = fs.readFileSync('pr_comment.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

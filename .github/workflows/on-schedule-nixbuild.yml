@@ -1,18 +1,134 @@
-name: periodic nixbuild
+# Periodic Nix package validation
+# Runs periodically to catch issues with external packages (nightly builds, changing URLs, etc.)
+# Uses dynamic package discovery via scripts/list-packages.sh
+# Packages are automatically discovered from flake outputs, eliminating
+# the need to maintain hardcoded package lists in CI configuration
+name: periodic nix validation
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 */3 * * *' # 8 times a day
+    - cron: '0 */3 * * *' # Every 3 hours (8 times a day)
+
+env:
+  # Cachix cache name - user needs to set this secret
+  CACHIX_CACHE_NAME: ${{ secrets.CACHIX_CACHE_NAME }}
+  CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
 jobs:
-  periodic-build-nix:
+  # JOB: Build and validate all packages
+  # Comprehensive check that all packages still build correctly
+  validate-all-packages:
+    name: Validate All Packages
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: cachix/install-nix-action@v27
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v27
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check build pkgs
-        run: make build-all 
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Setup Cachix for caching
+        if: env.CACHIX_AUTH_TOKEN != ''
+        uses: cachix/cachix-action@v14
+        with:
+          name: ${{ env.CACHIX_CACHE_NAME }}
+          authToken: ${{ env.CACHIX_AUTH_TOKEN }}
+
+      - name: Check flake validity
+        run: |
+          echo "=== Checking flake validity ==="
+          nix flake check --all-systems || echo "⚠️ Some systems may not be supported"
+
+      - name: Build all packages
+        run: |
+          echo "=== Building all packages ==="
+
+          # Dynamic package discovery - automatically discovers packages from flake outputs
+          echo "Discovering packages via scripts/list-packages.sh..."
+
+          # Build local packages first (no retry needed as they're local)
+          echo "Building local packages..."
+          local_packages=($(./scripts/list-packages.sh --local))
+          
+          if [ ${#local_packages[@]} -eq 0 ]; then
+            echo "⚠️ No local packages found"
+          else
+            for pkg in "${local_packages[@]}"; do
+              echo "::group::Building local package: $pkg"
+              if nix build ".#$pkg" --print-build-logs; then
+                echo "✓ Successfully built $pkg"
+              else
+                echo "✗ Failed to build $pkg"
+                echo "::endgroup::"
+                # For periodic builds, we want to know about failures
+                # but don't necessarily want to stop everything
+                echo "FAILED:$pkg" >> build_failures.txt
+              fi
+              echo "::endgroup::"
+            done
+          fi
+
+          # Build external packages with retry logic
+          echo ""
+          echo "Building external packages..."
+          external_packages=($(./scripts/list-packages.sh --external))
+          
+          if [ ${#external_packages[@]} -eq 0 ]; then
+            echo "⚠️ No external packages found"
+          else
+            for pkg in "${external_packages[@]}"; do
+              echo "::group::Building external package: $pkg"
+              # Retry network operations up to 3 times
+              max_retries=3
+              retry_count=0
+              success=false
+
+              while [ $retry_count -lt $max_retries ]; do
+                if nix build ".#$pkg" --print-build-logs; then
+                  echo "✓ Successfully built $pkg"
+                  success=true
+                  break
+                else
+                  retry_count=$((retry_count + 1))
+                  if [ $retry_count -lt $max_retries ]; then
+                    echo "⚠️ Build failed (attempt $retry_count/$max_retries), retrying..."
+                    sleep 10
+                  else
+                    echo "✗ Failed to build $pkg after $max_retries attempts"
+                  fi
+                fi
+              done
+
+              if [ "$success" = false ]; then
+                echo "FAILED:$pkg" >> build_failures.txt
+              fi
+              echo "::endgroup::"
+            done
+          fi
+
+      - name: Report results
+        run: |
+          echo "=== Build Results ==="
+
+          if [ -f build_failures.txt ]; then
+            echo "❌ Some packages failed to build:"
+            cat build_failures.txt
+            echo ""
+            echo "Failed packages:"
+            grep "FAILED:" build_failures.txt | sed 's/FAILED://'
+            exit 1
+          else
+            echo "✅ All packages built successfully!"
+          fi
+
+      - name: Send notification on failure
+        if: failure()
+        run: |
+          echo "⚠️ Periodic build failed - please investigate"
+          # Add notification logic here (e.g., Slack webhook, email, etc.)

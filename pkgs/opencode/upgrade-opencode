@@ -22,7 +22,8 @@ NC='\033[0m' # No Color
 
 # Repository information
 REPO="anomalyco/opencode"
-OVERLAY_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/nix/overlays/nightly-pkgs.nix"
+# Path to the file that defines the opencode package for this repo
+OVERLAY_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/opencode/default.nix"
 API_URL="https://api.github.com/repos/${REPO}/releases/latest"
 
 # Platform variants with their file patterns

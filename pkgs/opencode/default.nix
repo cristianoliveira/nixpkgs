@@ -10,7 +10,7 @@
 #   nix hash convert --hash-algo sha256 06wg50zymn83a8irbw67nir9ahn2vqszqjibcw8gzpw3r6ds5xpj
 pkgs: {
   opencode = let
-    version = "1.1.63";
+    version = "1.2.14";
 
     # Determine the architecture-specific file and URL
     # Linux logic matches install script: checks for musl and uses baseline for x64
@@ -34,20 +34,20 @@ pkgs: {
     # Linux arm64-musl: nix-prefetch-url https://github.com/anomalyco/opencode/releases/download/v1.1.60/opencode-linux-arm64-musl.tar.gz
     sha256 = if pkgs.stdenv.isDarwin then
       if pkgs.stdenv.isAarch64 then
-        "sha256-U/Ev4TY0hxbhVWG3TqyEiWEo3IbNpB4oarqPvH6lSUM="
+        "sha256-YTnwKqL5aEOTnGCmgnSy1YUwIlyKjHNCDHHdFnkjgG8="
       else
-        "sha256-F3mPmZePqAQkxSMkhETtvN8DDzIWAfQzQpQsp6Qvc6Y="
+        "sha256-0BNr+JvvE2HEwz5XenOITE3J1Y1f+6R8tsJLKfsFwRk="
     else if pkgs.stdenv.isLinux then
       if pkgs.stdenv.isAarch64 then
         if pkgs.stdenv.hostPlatform.isMusl then
-          "sha256-xvzswjUiMIk+qL9yn7tlT1LnN2sLwhh/W098RX/pXRQ="  # arm64-musl
+          "sha256-TdTEw0U0EPualNaXEg+R2xZZrSowjfcJUi9nLc5AInc="  # arm64-musl
         else
-          "sha256-eQQm3eaUK45ESj++yAGbuGUfFnPKWeP5rPgaFSM1enw="  # arm64
+          "sha256-ruqNQWDi+OkZCpLtabgdSnDVzIthBXD/DXgdrYiHcoI="  # arm64
       else  # x64
         if pkgs.stdenv.hostPlatform.isMusl then
-          "sha256-ZpPmmZzNGJX4p+SHghBIyoBtG2XABG9p0AxLk+upifw="  # x64-baseline-musl
+          "sha256-yRQm3ZrbLZ65UpSgpkKpF0Op7URxZ6rrIIjRcxruGoI="  # x64-baseline-musl
         else
-          "sha256-XSFLI9g4P9/a+yvWNvCTU2dkABrLIqwdgGORRcShz3U="  # x64-baseline
+          "sha256-4WGDwzOMQa8Eikx2yecOieHJpzQKPXK2h8Numv1tsh8="  # x64-baseline
     else throw "Unsupported platform";
 
     src = pkgs.fetchurl {

@@ -30,7 +30,7 @@
       let
         pkgs = import nixpkgs { inherit system; };
         swaysetterPkgs = import sway-setter { inherit pkgs; };
-        funzzyPkgs = import funzzy { inherit pkgs; };
+        funzzyPkgs = import (self + /pkgs/funzzy) pkgs;
         ergoPkgs = import ergo { inherit pkgs; };
         aerospaceScratchpad = import aerospace-scratchpad { inherit pkgs; };
         aerospaceMarks = import aerospace-marks { inherit pkgs; };
@@ -43,10 +43,10 @@
           sway-setter = swaysetterPkgs.default;
 
           # Funzzy packages
-          funzzy = funzzyPkgs.default;
-          fzz = funzzyPkgs.default;
-          funzzyNightly = funzzyPkgs.nightly;
-          fzzNightly = funzzyPkgs.nightly;
+          funzzy = funzzyPkgs.funzzy;
+          fzz = funzzyPkgs.funzzy;
+          funzzyNightly = funzzyPkgs.funzzyNightly;
+          fzzNightly = funzzyPkgs.funzzyNightly;
 
           # Ergo packages
           ergoProxy = ergoPkgs.default;

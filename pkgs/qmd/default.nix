@@ -16,23 +16,20 @@ pkgs: {
 
     dontStrip = true;
 
-    nativeBuildInputs = [ pkgs.bun pkgs.makeWrapper ];
+    nativeBuildInputs = [ pkgs.makeWrapper pkgs.bun ];
     buildInputs = [ pkgs.sqlite ];
-
-    buildPhase = ''
-      export HOME=$(mktemp -d)
-      bun install --frozen-lockfile
-    '';
 
     installPhase = ''
       mkdir -p $out/lib/qmd
       mkdir -p $out/bin
 
-      cp -r node_modules $out/lib/qmd/
       cp -r src $out/lib/qmd/
+      cp qmd $out/lib/qmd/
       cp package.json $out/lib/qmd/
+      cp bun.lock $out/lib/qmd/
 
       makeWrapper ${pkgs.bun}/bin/bun $out/bin/qmd \
+        --add-flags "--install" \
         --add-flags "$out/lib/qmd/src/qmd.ts" \
         --set DYLD_LIBRARY_PATH "${pkgs.sqlite.out}/lib" \
         --set LD_LIBRARY_PATH "${pkgs.sqlite.out}/lib"

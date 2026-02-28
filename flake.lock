@@ -6,11 +6,11 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1756284035,
-        "narHash": "sha256-jX7P9+CZAiMuLroSWxcFQ+z84tVtiLnrqIXVu49bMHk=",
+        "lastModified": 1770538635,
+        "narHash": "sha256-1bNZ/CdCrxt4zQTSgP0qzm6IYKF6TUg5YgO5GUWj63g=",
         "owner": "cristianoliveira",
         "repo": "aerospace-marks",
-        "rev": "f9e8ded1b59e0aea773364d8c5cde271571afccb",
+        "rev": "6edcdff6e959cad54339def1c91a7d771599e830",
         "type": "github"
       },
       "original": {
@@ -25,11 +25,11 @@
         "utils": "utils_2"
       },
       "locked": {
-        "lastModified": 1759471266,
-        "narHash": "sha256-bOxEcxOb/1V3L7ZUuOvMUhC/wSNjcZpfYOS8bBUqJ6o=",
+        "lastModified": 1770538622,
+        "narHash": "sha256-9v/MCliPIASrIbppZSC9lDiJ8RPonJFfKzu7YOpZ6fI=",
         "owner": "cristianoliveira",
         "repo": "aerospace-scratchpad",
-        "rev": "57bea7a29279e18e0cb9756f03617c28d50496e6",
+        "rev": "b6fc3f4f0a569eb4d6e97e71391b7ee78e7ce087",
         "type": "github"
       },
       "original": {
@@ -84,11 +84,11 @@
         "utils": "utils_6"
       },
       "locked": {
-        "lastModified": 1756295847,
-        "narHash": "sha256-eREYPZL54OOrbVeTpiedrY4fOiaCNtdovhpWANVkqUw=",
+        "lastModified": 1768848223,
+        "narHash": "sha256-7+lGHO5oulrshzzVM5GFqL30zTNxFz1iopNAFhdmQxM=",
         "owner": "cristianoliveira",
         "repo": "funzzy",
-        "rev": "5e26678028c2f3c85df13c20c2c2d3edf2da374d",
+        "rev": "04e214bfbe4c034b420fa1ec43a483689d404227",
         "type": "github"
       },
       "original": {
@@ -189,11 +189,11 @@
     },
     "nixpkgs_7": {
       "locked": {
-        "lastModified": 1759524299,
-        "narHash": "sha256-7ygfgWmHhaetxDxycQnOXC9ARjt9MnsY4aUZmpVsvE0=",
+        "lastModified": 1772257779,
+        "narHash": "sha256-6gvegHTyhNQjJoT3JJjnRACT2Uc8uRo/XA14yxV7TII=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "deff17b7b414e449d138598b616643f5ef072b3d",
+        "rev": "c3973168f487147b3045e4cb7ff63b1798fb5e34",
         "type": "github"
       },
       "original": {

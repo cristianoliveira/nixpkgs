@@ -26,19 +26,18 @@
     self,
     ...
   }:
-    utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-        swaysetterPkgs = import sway-setter { inherit pkgs; };
-        funzzyPkgs = import funzzy { inherit pkgs; };
-        ergoPkgs = import ergo { inherit pkgs; };
-        aerospaceScratchpad = import aerospace-scratchpad { inherit pkgs; };
-        aerospaceMarks = import aerospace-marks { inherit pkgs; };
+    let
+      mkCoPackages = pkgs:
+        let
+          swaysetterPkgs = import sway-setter { inherit pkgs; };
+          funzzyPkgs = import funzzy { inherit pkgs; };
+          ergoPkgs = import ergo { inherit pkgs; };
+          aerospaceScratchpad = import aerospace-scratchpad { inherit pkgs; };
+          aerospaceMarks = import aerospace-marks { inherit pkgs; };
 
-        # Import local packages from centralized pkgs/default.nix
-        localPackages = import (self + /pkgs) pkgs;
-      in {
-        packages = {
+          # Import local packages from centralized pkgs/default.nix
+          localPackages = import (self + /pkgs) pkgs;
+        in {
           # Sway Setter packages
           sway-setter = swaysetterPkgs.default;
 
@@ -58,5 +57,23 @@
 
           # Local NUR packages
         } // localPackages;
-    });
+      overlay = final: prev: {
+        co = mkCoPackages final;
+      };
+      perSystem = utils.lib.eachDefaultSystem (system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+        in {
+          packages = mkCoPackages pkgs;
+        });
+    in
+      perSystem // {
+        overlays = { default = overlay; };
+        lib = {
+          withOverlays = system: overlays: import nixpkgs {
+            inherit system;
+            overlays = [ overlay ] ++ overlays;
+          };
+        };
+      };
 }

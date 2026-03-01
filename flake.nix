@@ -34,7 +34,31 @@
         let
           pkgs = import nixpkgs { inherit system; };
           swaysetterPkgs = import sway-setter { inherit pkgs; };
-          funzzyPkgs = import funzzy { inherit pkgs; };
+          funzzyDarwin =
+            if pkgs.stdenv.isDarwin
+            then
+              pkgs.darwin // {
+                apple_sdk = pkgs.darwin.apple_sdk // {
+                  frameworks = pkgs.darwin.apple_sdk.frameworks // {
+                    CoreServices = pkgs.libiconv;
+                  };
+                };
+              }
+            else {
+              apple_sdk.frameworks.CoreServices = pkgs.libiconv;
+            };
+          funzzyPkg = pkgs.callPackage (funzzy + /nix/package.nix) {
+            darwin = funzzyDarwin;
+            rustPlatform = pkgs.rustPlatform // {
+              buildRustPackage = args:
+                pkgs.rustPlatform.buildRustPackage (args // {
+                  cargoHash = "sha256-n9UHyr7W4hrN0+2dsYAYqkP/uzBv74p5XHU0g2MReJY=";
+                });
+            };
+          };
+          funzzyNightlyPkg = pkgs.callPackage (funzzy + /nix/package-nightly.nix) {
+            darwin = funzzyDarwin;
+          };
           ergoPkgs = import ergo { inherit pkgs; };
           aerospaceScratchpad = import aerospace-scratchpad { inherit pkgs; };
           aerospaceMarks = import aerospace-marks { inherit pkgs; };
@@ -47,10 +71,10 @@
             sway-setter = swaysetterPkgs.default;
 
             # Funzzy packages
-            funzzy = funzzyPkgs.default;
-            fzz = funzzyPkgs.default;
-            funzzyNightly = funzzyPkgs.nightly;
-            fzzNightly = funzzyPkgs.nightly;
+            funzzy = funzzyPkg;
+            fzz = funzzyPkg;
+            funzzyNightly = funzzyNightlyPkg;
+            fzzNightly = funzzyNightlyPkg;
 
             # Ergo packages
             ergoProxy = ergoPkgs.default;

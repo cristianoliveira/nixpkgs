@@ -58,6 +58,12 @@
           };
           funzzyNightlyPkg = pkgs.callPackage (funzzy + /nix/package-nightly.nix) {
             darwin = funzzyDarwin;
+            rustPlatform = pkgs.rustPlatform // {
+              buildRustPackage = args:
+                pkgs.rustPlatform.buildRustPackage (args // {
+                  cargoHash = "sha256-m7qlL+ajw/rwIHQ7KAw7gI9QmpTBnxWEeTVRgrBOcl4=";
+                });
+            };
           };
           ergoPkgs = import ergo { inherit pkgs; };
           aerospaceScratchpad = import aerospace-scratchpad { inherit pkgs; };

@@ -93,7 +93,7 @@ jobs:
           for pkg in "${packages[@]}"; do
             echo "::group::Building $pkg"
             # Skip funzzy packages on macOS
-            if [[ "$pkg" == *"funzzy"* ]] && [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            if [[ "${{ matrix.os }}" == "macos-latest" ]] && [[ "$pkg" =~ ^(funzzy|funzzyNightly|fzz|fzzNightly)$ ]]; then
               echo "⚠️ Skipping $pkg on macOS (known compatibility issue)"
               echo "::endgroup::"
               continue
@@ -125,7 +125,7 @@ jobs:
           for pkg in "${local_packages[@]}"; do
             echo "::group::Testing $pkg"
             # Skip funzzy packages on macOS
-            if [[ "$pkg" == *"funzzy"* ]] && [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            if [[ "${{ matrix.os }}" == "macos-latest" ]] && [[ "$pkg" =~ ^(funzzy|funzzyNightly|fzz|fzzNightly)$ ]]; then
               echo "⚠️ Skipping $pkg smoke test on macOS (known compatibility issue)"
               echo "::endgroup::"
               continue
@@ -202,7 +202,7 @@ jobs:
           for pkg in "${packages[@]}"; do
             echo "::group::Building $pkg"
             # Skip funzzy packages on macOS
-            if [[ "$pkg" == *"funzzy"* ]] && [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            if [[ "${{ matrix.os }}" == "macos-latest" ]] && [[ "$pkg" =~ ^(funzzy|funzzyNightly|fzz|fzzNightly)$ ]]; then
               echo "⚠️ Skipping $pkg on macOS (known compatibility issue)"
               echo "::endgroup::"
               continue
@@ -264,7 +264,7 @@ jobs:
               continue
             fi
             # Skip funzzy packages on macOS
-            if [[ "$pkg" == *"funzzy"* ]] && [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            if [[ "${{ matrix.os }}" == "macos-latest" ]] && [[ "$pkg" =~ ^(funzzy|funzzyNightly|fzz|fzzNightly)$ ]]; then
               echo "⚠️ Skipping $pkg smoke test on macOS (known compatibility issue)"
               echo "::endgroup::"
               continue

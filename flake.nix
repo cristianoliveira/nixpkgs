@@ -26,37 +26,51 @@
     self,
     ...
   }:
-    utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-        swaysetterPkgs = import sway-setter { inherit pkgs; };
-        funzzyPkgs = import funzzy { inherit pkgs; };
-        ergoPkgs = import ergo { inherit pkgs; };
-        aerospaceScratchpad = import aerospace-scratchpad { inherit pkgs; };
-        aerospaceMarks = import aerospace-marks { inherit pkgs; };
+    let
+      overlay = final: prev: {
+        co = import (self + /pkgs) prev;
+      };
+      perSystem = utils.lib.eachDefaultSystem (system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+          swaysetterPkgs = import sway-setter { inherit pkgs; };
+          funzzyPkgs = import funzzy { inherit pkgs; };
+          ergoPkgs = import ergo { inherit pkgs; };
+          aerospaceScratchpad = import aerospace-scratchpad { inherit pkgs; };
+          aerospaceMarks = import aerospace-marks { inherit pkgs; };
 
-        # Import local packages from centralized pkgs/default.nix
-        localPackages = import (self + /pkgs) pkgs;
-      in {
-        packages = {
-          # Sway Setter packages
-          sway-setter = swaysetterPkgs.default;
+          # Import local packages from centralized pkgs/default.nix
+          localPackages = import (self + /pkgs) pkgs;
+        in {
+          packages = {
+            # Sway Setter packages
+            sway-setter = swaysetterPkgs.default;
 
-          # Funzzy packages
-          funzzy = funzzyPkgs.default;
-          fzz = funzzyPkgs.default;
-          funzzyNightly = funzzyPkgs.nightly;
-          fzzNightly = funzzyPkgs.nightly;
+            # Funzzy packages
+            funzzy = funzzyPkgs.default;
+            fzz = funzzyPkgs.default;
+            funzzyNightly = funzzyPkgs.nightly;
+            fzzNightly = funzzyPkgs.nightly;
 
-          # Ergo packages
-          ergoProxy = ergoPkgs.default;
-          ergoProxyNightly = ergoPkgs.nightly;
+            # Ergo packages
+            ergoProxy = ergoPkgs.default;
+            ergoProxyNightly = ergoPkgs.nightly;
 
-          # Aerospace packages
-          aerospace-scratchpad = aerospaceScratchpad.default;
-          aerospace-marks = aerospaceMarks.default;
+            # Aerospace packages
+            aerospace-scratchpad = aerospaceScratchpad.default;
+            aerospace-marks = aerospaceMarks.default;
 
-          # Local NUR packages
-        } // localPackages;
-    });
+            # Local NUR packages
+          } // localPackages;
+        });
+    in
+      perSystem // {
+        overlays = { default = overlay; };
+        lib = {
+          withOverlays = system: overlays: import nixpkgs {
+            inherit system;
+            overlays = [ overlay ] ++ overlays;
+          };
+        };
+      };
 }

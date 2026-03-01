@@ -26,37 +26,81 @@
     self,
     ...
   }:
-    utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-        swaysetterPkgs = import sway-setter { inherit pkgs; };
-        funzzyPkgs = import (self + /pkgs/funzzy) pkgs;
-        ergoPkgs = import ergo { inherit pkgs; };
-        aerospaceScratchpad = import aerospace-scratchpad { inherit pkgs; };
-        aerospaceMarks = import aerospace-marks { inherit pkgs; };
+    let
+      overlay = final: prev: {
+        co = import (self + /pkgs) prev;
+      };
+      perSystem = utils.lib.eachDefaultSystem (system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+          swaysetterPkgs = import sway-setter { inherit pkgs; };
+          funzzyDarwin =
+            if pkgs.stdenv.isDarwin
+            then
+              pkgs.darwin // {
+                apple_sdk = pkgs.darwin.apple_sdk // {
+                  frameworks = pkgs.darwin.apple_sdk.frameworks // {
+                    CoreServices = pkgs.libiconv;
+                  };
+                };
+              }
+            else {
+              apple_sdk.frameworks.CoreServices = pkgs.libiconv;
+            };
+          funzzyPkg = pkgs.callPackage (funzzy + /nix/package.nix) {
+            darwin = funzzyDarwin;
+            rustPlatform = pkgs.rustPlatform // {
+              buildRustPackage = args:
+                pkgs.rustPlatform.buildRustPackage (args // {
+                  cargoHash = "sha256-n9UHyr7W4hrN0+2dsYAYqkP/uzBv74p5XHU0g2MReJY=";
+                });
+            };
+          };
+          funzzyNightlyPkg = pkgs.callPackage (funzzy + /nix/package-nightly.nix) {
+            darwin = funzzyDarwin;
+            rustPlatform = pkgs.rustPlatform // {
+              buildRustPackage = args:
+                pkgs.rustPlatform.buildRustPackage (args // {
+                  cargoHash = "sha256-m7qlL+ajw/rwIHQ7KAw7gI9QmpTBnxWEeTVRgrBOcl4=";
+                });
+            };
+          };
+          ergoPkgs = import ergo { inherit pkgs; };
+          aerospaceScratchpad = import aerospace-scratchpad { inherit pkgs; };
+          aerospaceMarks = import aerospace-marks { inherit pkgs; };
 
-        # Import local packages from centralized pkgs/default.nix
-        localPackages = import (self + /pkgs) pkgs;
-      in {
-        packages = {
-          # Sway Setter packages
-          sway-setter = swaysetterPkgs.default;
+          # Import local packages from centralized pkgs/default.nix
+          localPackages = import (self + /pkgs) pkgs;
+        in {
+          packages = {
+            # Sway Setter packages
+            sway-setter = swaysetterPkgs.default;
 
-          # Funzzy packages
-          funzzy = funzzyPkgs.funzzy;
-          fzz = funzzyPkgs.funzzy;
-          funzzyNightly = funzzyPkgs.funzzyNightly;
-          fzzNightly = funzzyPkgs.funzzyNightly;
+            # Funzzy packages
+            funzzy = funzzyPkg;
+            fzz = funzzyPkg;
+            funzzyNightly = funzzyNightlyPkg;
+            fzzNightly = funzzyNightlyPkg;
 
-          # Ergo packages
-          ergoProxy = ergoPkgs.default;
-          ergoProxyNightly = ergoPkgs.nightly;
+            # Ergo packages
+            ergoProxy = ergoPkgs.default;
+            ergoProxyNightly = ergoPkgs.nightly;
 
-          # Aerospace packages
-          aerospace-scratchpad = aerospaceScratchpad.default;
-          aerospace-marks = aerospaceMarks.default;
+            # Aerospace packages
+            aerospace-scratchpad = aerospaceScratchpad.default;
+            aerospace-marks = aerospaceMarks.default;
 
-          # Local NUR packages
-        } // localPackages;
-    });
+            # Local NUR packages
+          } // localPackages;
+        });
+    in
+      perSystem // {
+        overlays = { default = overlay; };
+        lib = {
+          withOverlays = system: overlays: import nixpkgs {
+            inherit system;
+            overlays = [ overlay ] ++ overlays;
+          };
+        };
+      };
 }

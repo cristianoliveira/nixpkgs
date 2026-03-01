@@ -78,7 +78,7 @@ main() {
 
 	echo -e "${YELLOW}Checking overlay injection for system: $system${NC}"
 
-	# Evaluate the overlay and check co.beads
+	# Evaluate the overlay and check representative packages
 	echo -e "${YELLOW}Evaluating overlay...${NC}"
 	if ! nix eval --impure --expr \
 		"let
@@ -91,6 +91,20 @@ main() {
 			pkgs.co.beads" 2>/dev/null; then
 		echo -e "${RED}✗ Overlay injection failed${NC}"
 		echo -e "${RED}  Could not evaluate pkgs.co.beads${NC}"
+		exit 1
+	fi
+
+	if ! nix eval --impure --expr \
+		"let
+			flake = builtins.getFlake (toString ./.);
+			pkgs = import flake.inputs.nixpkgs {
+				system = \"$system\";
+				overlays = [ flake.overlays.default ];
+			};
+		in
+			pkgs.co.funzzy" 2>/dev/null; then
+		echo -e "${RED}✗ Overlay injection failed${NC}"
+		echo -e "${RED}  Could not evaluate pkgs.co.funzzy${NC}"
 		exit 1
 	fi
 
@@ -112,10 +126,9 @@ main() {
 	echo -e "${GREEN}✓ Overlay injection successful${NC}"
 	echo -e "${GREEN}  Derivation: $derivation_path${NC}"
 
-	# Optional: check that co attribute set exists and contains beads
-	# This is redundant but good for clarity
+	# Check that co attribute set exists and contains representative packages
 	echo -e "${YELLOW}Checking co attribute set...${NC}"
-	if ! nix eval --impure --expr \
+	co_has_expected=$(nix eval --impure --raw --expr \
 		"let
 			flake = builtins.getFlake (toString ./.);
 			pkgs = import flake.inputs.nixpkgs {
@@ -123,12 +136,34 @@ main() {
 				overlays = [ flake.overlays.default ];
 			};
 		in
-			builtins.isAttrs pkgs.co && pkgs.co ? beads" 2>/dev/null | grep -q true; then
-		echo -e "${RED}✗ co attribute set missing or does not contain beads${NC}"
+			if builtins.isAttrs pkgs.co && pkgs.co ? beads && pkgs.co ? funzzy then \"true\" else \"false\"" 2>/dev/null)
+	if [[ "$co_has_expected" != "true" ]]; then
+		echo -e "${RED}✗ co attribute set missing expected packages (beads/funzzy)${NC}"
 		exit 1
 	fi
 
-	echo -e "${GREEN}✓ co attribute set contains beads${NC}"
+	echo -e "${GREEN}✓ co attribute set contains beads and funzzy${NC}"
+
+	# Verify co contains every package exported by flake packages for this system
+	echo -e "${YELLOW}Checking co package completeness...${NC}"
+	missing_packages=$(nix eval --impure --json --expr \
+		"let
+			flake = builtins.getFlake (toString ./.);
+			pkgs = import flake.inputs.nixpkgs {
+				system = \"$system\";
+				overlays = [ flake.overlays.default ];
+			};
+			flakePackageNames = builtins.attrNames flake.packages.${system};
+		in
+			builtins.filter (name: !(builtins.hasAttr name pkgs.co)) flakePackageNames" 2>/dev/null)
+
+	if [[ "$missing_packages" != "[]" ]]; then
+		echo -e "${RED}✗ co is missing packages from flake outputs${NC}"
+		echo -e "${RED}  Missing: $missing_packages${NC}"
+		exit 1
+	fi
+
+	echo -e "${GREEN}✓ co contains all flake package outputs for $system${NC}"
 	echo -e "${GREEN}All checks passed! Overlay is injectable and exposes expected packages.${NC}"
 }
 

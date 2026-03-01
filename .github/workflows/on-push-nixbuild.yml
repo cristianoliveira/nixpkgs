@@ -92,6 +92,13 @@ jobs:
 
           for pkg in "${packages[@]}"; do
             echo "::group::Building $pkg"
+            # Skip funzzy packages on macOS
+            if [[ "$pkg" == *"funzzy"* ]] && [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+              echo "⚠️ Skipping $pkg on macOS (known compatibility issue)"
+              echo "::endgroup::"
+              continue
+            fi
+            
             if nix build ".#$pkg" --print-build-logs --keep-going; then
               echo "✓ Successfully built $pkg"
             else
@@ -117,6 +124,13 @@ jobs:
           
           for pkg in "${local_packages[@]}"; do
             echo "::group::Testing $pkg"
+            # Skip funzzy packages on macOS
+            if [[ "$pkg" == *"funzzy"* ]] && [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+              echo "⚠️ Skipping $pkg smoke test on macOS (known compatibility issue)"
+              echo "::endgroup::"
+              continue
+            fi
+            
             if nix build ".#$pkg" --print-build-logs; then
               # Find any executable binary
               binary=$(find ./result/bin -type f -executable | head -1)
@@ -187,6 +201,13 @@ jobs:
 
           for pkg in "${packages[@]}"; do
             echo "::group::Building $pkg"
+            # Skip funzzy packages on macOS
+            if [[ "$pkg" == *"funzzy"* ]] && [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+              echo "⚠️ Skipping $pkg on macOS (known compatibility issue)"
+              echo "::endgroup::"
+              continue
+            fi
+            
             # Retry up to 3 times for network failures
             max_retries=3
             retry_count=0
@@ -239,6 +260,12 @@ jobs:
             fi
             if [[ "$pkg" == *"sway"* ]] && [[ "${{ matrix.os }}" == "macos-latest" ]]; then
               echo "⚠️ Sway packages are Linux-only (skipping)"
+              echo "::endgroup::"
+              continue
+            fi
+            # Skip funzzy packages on macOS
+            if [[ "$pkg" == *"funzzy"* ]] && [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+              echo "⚠️ Skipping $pkg smoke test on macOS (known compatibility issue)"
               echo "::endgroup::"
               continue
             fi

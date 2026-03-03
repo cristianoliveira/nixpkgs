@@ -11,6 +11,7 @@ pkgs:
   inherit (import ./beads_viewer pkgs) beads_viewer;
   inherit (import ./confluence-cli pkgs) confluence-cli;
   inherit (import ./qmd pkgs) qmd;
+  inherit (import ./gogcli pkgs) gogcli;
   inherit (import ./funzzy pkgs) funzzy funzzyNightly;
   inherit (import ./pi pkgs) pi;
 }

@@ -16,7 +16,7 @@ pkgs: {
 
     dontStrip = true;
 
-    nativeBuildInputs = [ pkgs.makeWrapper pkgs.bun ];
+    nativeBuildInputs = [ pkgs.makeWrapper pkgs.bun pkgs.python3 ];
     buildInputs = [ pkgs.sqlite ];
 
     installPhase = ''
@@ -27,6 +27,19 @@ pkgs: {
       cp qmd $out/lib/qmd/
       cp package.json $out/lib/qmd/
       cp bun.lock $out/lib/qmd/
+
+      # Upstream package.json misses linux-arm64 sqlite-vec optional package.
+      python - <<PY
+import json
+path = "$out/lib/qmd/package.json"
+with open(path) as f:
+    data = json.load(f)
+opt = data.setdefault("optionalDependencies", {})
+opt["sqlite-vec-linux-arm64"] = "^0.1.7-alpha.2"
+with open(path, "w") as f:
+    json.dump(data, f, indent=2)
+    f.write("\n")
+PY
 
       makeWrapper ${pkgs.bun}/bin/bun $out/bin/qmd \
         --add-flags "--install=auto" \

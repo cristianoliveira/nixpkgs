@@ -15,4 +15,5 @@ pkgs:
   inherit (import ./gogcli pkgs) gogcli;
   inherit (import ./funzzy pkgs) funzzy funzzyNightly;
   inherit (import ./pi pkgs) pi;
+  inherit (import ./playwright-cli pkgs) playwright-cli;
 }

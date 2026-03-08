@@ -8,7 +8,9 @@
     sway-setter.url = "github:cristianoliveira/sway-setter";
     funzzy.url = "github:cristianoliveira/funzzy";
     ergo.url = "github:cristianoliveira/ergo";
-    snipgpt.url = "github:cristianoliveira/snipgpt";
+
+    # https://github.com/juanibiapina/mcpli
+    mcpli.url = "github:juanibiapina/mcpli";
 
     aerospace-scratchpad.url = "github:cristianoliveira/aerospace-scratchpad";
     aerospace-marks.url = "github:cristianoliveira/aerospace-marks";
@@ -20,9 +22,9 @@
     sway-setter,
     funzzy,
     ergo,
-    snipgpt,
     aerospace-scratchpad,
     aerospace-marks,
+    mcpli,
     self,
     ...
   }:
@@ -56,15 +58,6 @@
                 });
             };
           };
-          funzzyNightlyPkg = pkgs.callPackage (funzzy + /nix/package-nightly.nix) {
-            darwin = funzzyDarwin;
-            rustPlatform = pkgs.rustPlatform // {
-              buildRustPackage = args:
-                pkgs.rustPlatform.buildRustPackage (args // {
-                  cargoHash = "sha256-m7qlL+ajw/rwIHQ7KAw7gI9QmpTBnxWEeTVRgrBOcl4=";
-                });
-            };
-          };
           ergoPkgs = import ergo { inherit pkgs; };
           aerospaceScratchpad = import aerospace-scratchpad { inherit pkgs; };
           aerospaceMarks = import aerospace-marks { inherit pkgs; };
@@ -79,16 +72,15 @@
             # Funzzy packages
             funzzy = funzzyPkg;
             fzz = funzzyPkg;
-            funzzyNightly = funzzyNightlyPkg;
-            fzzNightly = funzzyNightlyPkg;
 
             # Ergo packages
             ergoProxy = ergoPkgs.default;
-            ergoProxyNightly = ergoPkgs.nightly;
 
             # Aerospace packages
             aerospace-scratchpad = aerospaceScratchpad.default;
             aerospace-marks = aerospaceMarks.default;
+
+            mcpli = mcpli.packages.${system}.default;
 
             # Local NUR packages
           } // localPackages;

@@ -28,7 +28,12 @@
     pname = "pi";
     inherit version src;
 
-    nativeBuildInputs = [ pkgs.gnutar pkgs.gzip ];
+    nativeBuildInputs = [ pkgs.gnutar pkgs.gzip ]
+      ++ pkgs.lib.optionals pkgs.stdenv.isLinux [ pkgs.autoPatchelfHook ];
+
+    buildInputs = pkgs.lib.optionals pkgs.stdenv.isLinux [
+      pkgs.stdenv.cc.cc.lib
+    ];
 
     sourceRoot = ".";
 

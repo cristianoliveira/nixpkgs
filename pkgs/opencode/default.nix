@@ -11,6 +11,7 @@
 pkgs: {
   opencode = let
     version = "1.2.20";
+    needsPatchelf = pkgs.stdenv.isLinux && !pkgs.stdenv.hostPlatform.isMusl;
 
     # Determine the architecture-specific file and URL
     # Linux logic matches install script: checks for musl and uses baseline for x64
@@ -58,7 +59,12 @@ pkgs: {
     pname = "opencode";
     inherit version;
 
-    nativeBuildInputs = if pkgs.stdenv.isDarwin then [ pkgs.unzip ] else [ pkgs.gnutar pkgs.gzip ];
+    nativeBuildInputs = (if pkgs.stdenv.isDarwin then [ pkgs.unzip ] else [ pkgs.gnutar pkgs.gzip ])
+      ++ pkgs.lib.optionals needsPatchelf [ pkgs.autoPatchelfHook ];
+
+    buildInputs = pkgs.lib.optionals needsPatchelf [
+      pkgs.stdenv.cc.cc.lib
+    ];
 
     # Don't strip the binary - it's built with Bun and stripping breaks it
     dontStrip = true;

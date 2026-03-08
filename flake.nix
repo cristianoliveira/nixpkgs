@@ -29,12 +29,8 @@
     ...
   }:
     let
-      overlay = final: prev: {
-        co = import (self + /pkgs) prev;
-      };
-      perSystem = utils.lib.eachDefaultSystem (system:
+      mkExternalPackages = pkgs: system:
         let
-          pkgs = import nixpkgs { inherit system; };
           swaysetterPkgs = import sway-setter { inherit pkgs; };
           funzzyDarwin =
             if pkgs.stdenv.isDarwin
@@ -61,29 +57,27 @@
           ergoPkgs = import ergo { inherit pkgs; };
           aerospaceScratchpad = import aerospace-scratchpad { inherit pkgs; };
           aerospaceMarks = import aerospace-marks { inherit pkgs; };
+        in {
+          sway-setter = swaysetterPkgs.default;
+          funzzy = funzzyPkg;
+          fzz = funzzyPkg;
+          ergoProxy = ergoPkgs.default;
+          aerospace-scratchpad = aerospaceScratchpad.default;
+          aerospace-marks = aerospaceMarks.default;
+          mcpli = mcpli.packages.${system}.default;
+        };
+      overlay = final: prev: {
+        co = mkExternalPackages prev prev.system // import (self + /pkgs) prev;
+      };
+      perSystem = utils.lib.eachDefaultSystem (system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+          externalPackages = mkExternalPackages pkgs system;
 
           # Import local packages from centralized pkgs/default.nix
           localPackages = import (self + /pkgs) pkgs;
         in {
-          packages = {
-            # Sway Setter packages
-            sway-setter = swaysetterPkgs.default;
-
-            # Funzzy packages
-            funzzy = funzzyPkg;
-            fzz = funzzyPkg;
-
-            # Ergo packages
-            ergoProxy = ergoPkgs.default;
-
-            # Aerospace packages
-            aerospace-scratchpad = aerospaceScratchpad.default;
-            aerospace-marks = aerospaceMarks.default;
-
-            mcpli = mcpli.packages.${system}.default;
-
-            # Local NUR packages
-          } // localPackages;
+          packages = externalPackages // localPackages;
         });
     in
       perSystem // {

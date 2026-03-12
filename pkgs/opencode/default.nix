@@ -10,7 +10,7 @@
 #   nix hash convert --hash-algo sha256 06wg50zymn83a8irbw67nir9ahn2vqszqjibcw8gzpw3r6ds5xpj
 pkgs: {
   opencode = let
-    version = "1.2.20";
+    version = "1.2.24";
     needsPatchelf = pkgs.stdenv.isLinux && !pkgs.stdenv.hostPlatform.isMusl;
 
     # Determine the architecture-specific file and URL
@@ -29,26 +29,26 @@ pkgs: {
     else throw "Unsupported platform";
 
     # Update sha256 as needed - use empty string "" and nix will tell you the correct one
-    # Linux x64-baseline: nix-prefetch-url https://github.com/anomalyco/opencode/releases/download/v1.1.60/opencode-linux-x64-baseline.tar.gz
-    # Linux x64-baseline-musl: nix-prefetch-url https://github.com/anomalyco/opencode/releases/download/v1.1.60/opencode-linux-x64-baseline-musl.tar.gz
-    # Linux arm64: nix-prefetch-url https://github.com/anomalyco/opencode/releases/download/v1.1.60/opencode-linux-arm64.tar.gz
-    # Linux arm64-musl: nix-prefetch-url https://github.com/anomalyco/opencode/releases/download/v1.1.60/opencode-linux-arm64-musl.tar.gz
+    # Linux x64-baseline: nix-prefetch-url https://github.com/anomalyco/opencode/releases/download/v1.2.24/opencode-linux-x64-baseline.tar.gz
+    # Linux x64-baseline-musl: nix-prefetch-url https://github.com/anomalyco/opencode/releases/download/v1.2.24/opencode-linux-x64-baseline-musl.tar.gz
+    # Linux arm64: nix-prefetch-url https://github.com/anomalyco/opencode/releases/download/v1.2.24/opencode-linux-arm64.tar.gz
+    # Linux arm64-musl: nix-prefetch-url https://github.com/anomalyco/opencode/releases/download/v1.2.24/opencode-linux-arm64-musl.tar.gz
     sha256 = if pkgs.stdenv.isDarwin then
       if pkgs.stdenv.isAarch64 then
-        "sha256-IDhgVr/9xOxSFV+xB/tHDUcpf4bcQF+ZOZJZbcPrSoE="
+        "sha256-hYRnFVlDwQMIFQR8vaL9UHTRupMJoA5d1FhaGbPEiW4="
       else
-        "sha256-UbHdywHcFEEhemz2cw4JY17Lw4hlqP0qv3Id3307DcA="
+        "sha256-TeRmLSCog02Pk+RZZf9fq/vA9p8V60uzPwdC7O1U4gM="
     else if pkgs.stdenv.isLinux then
       if pkgs.stdenv.isAarch64 then
         if pkgs.stdenv.hostPlatform.isMusl then
-          "sha256-U9Qmiwa11tdolg3uXrMtxoMb+eroyONbg0Xu7TNrjBM="  # arm64-musl
+          "sha256-7UvYvAEE5iouNr3Msksy37pJR/1QJrlrWEJ1G/zwUp4="  # arm64-musl
         else
-          "sha256-oIE6cGyIZc9hsuwVLxFq8JUZv/cDx3SrFrSmZ7FU1oM="  # arm64
+          "sha256-WFB7mMKQL9gZudJjlZTuxPNuVwjxFLoCixw+h3u15H0="  # arm64
       else  # x64
         if pkgs.stdenv.hostPlatform.isMusl then
-          "sha256-LMUHvzn1GInGYfuICfVrTafm94e7R9G6V2OBiztjCvM="  # x64-baseline-musl
+          "sha256-h4yht8+33L5XeeD8k0oHSQICV35SBEymnsN6dsZebrk="  # x64-baseline-musl
         else
-          "sha256-/BTUPzNVX1xkiwZJxCSNTnTq4dXQ54T43sg7lzE+TDU="  # x64-baseline
+          "sha256-Z7IzkVZXRBSBz1LLSucA0SeIfkD9MR2dlo1BsQxYxQE="  # x64-baseline
     else throw "Unsupported platform";
 
     src = pkgs.fetchurl {

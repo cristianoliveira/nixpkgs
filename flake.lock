@@ -115,6 +115,24 @@
         "type": "github"
       }
     },
+    "mcplifork": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_8"
+      },
+      "locked": {
+        "lastModified": 1773921274,
+        "narHash": "sha256-FSZkPH5jOHAwXndF+uHvFseS33jY0Ya+Lxg8P5+pFS0=",
+        "owner": "cristianoliveira",
+        "repo": "mcpli",
+        "rev": "265b06f9b01133c0f84670b34ce5911efded1335",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cristianoliveira",
+        "repo": "mcpli",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1748639162,
@@ -122,6 +140,21 @@
         "owner": "NixOS",
         "repo": "nixpkgs",
         "rev": "6a43740d5694345c3e8464e4a52e61c96f109803",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_10": {
+      "locked": {
+        "lastModified": 1738349789,
+        "narHash": "sha256-iU/eBsXr5iJp/EqfMBrXzaKO7j8GP2DnyccQrI3B6Zk=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "fb4e9aac4ee68b9034f99b55cc4c6fa8096525b3",
         "type": "github"
       },
       "original": {
@@ -223,6 +256,22 @@
     },
     "nixpkgs_8": {
       "locked": {
+        "lastModified": 1771207753,
+        "narHash": "sha256-b9uG8yN50DRQ6A7JdZBfzq718ryYrlmGgqkRm9OOwCE=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "d1c15b7d5806069da59e819999d70e1cec0760bf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_9": {
+      "locked": {
         "lastModified": 1772257779,
         "narHash": "sha256-6gvegHTyhNQjJoT3JJjnRACT2Uc8uRo/XA14yxV7TII=",
         "owner": "nixos",
@@ -236,21 +285,6 @@
         "type": "github"
       }
     },
-    "nixpkgs_9": {
-      "locked": {
-        "lastModified": 1738349789,
-        "narHash": "sha256-iU/eBsXr5iJp/EqfMBrXzaKO7j8GP2DnyccQrI3B6Zk=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "fb4e9aac4ee68b9034f99b55cc4c6fa8096525b3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "aerospace-marks": "aerospace-marks",
@@ -258,7 +292,8 @@
         "ergo": "ergo",
         "funzzy": "funzzy",
         "mcpli": "mcpli",
-        "nixpkgs": "nixpkgs_8",
+        "mcplifork": "mcplifork",
+        "nixpkgs": "nixpkgs_9",
         "sway-setter": "sway-setter_2",
         "utils": "utils_8"
       }
@@ -284,7 +319,7 @@
     },
     "sway-setter_2": {
       "inputs": {
-        "nixpkgs": "nixpkgs_9",
+        "nixpkgs": "nixpkgs_10",
         "utils": "utils_7"
       },
       "locked": {

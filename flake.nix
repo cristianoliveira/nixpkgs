@@ -11,6 +11,7 @@
 
     # https://github.com/juanibiapina/mcpli
     mcpli.url = "github:juanibiapina/mcpli";
+    mcplifork.url = "github:cristianoliveira/mcpli";
 
     aerospace-scratchpad.url = "github:cristianoliveira/aerospace-scratchpad";
     aerospace-marks.url = "github:cristianoliveira/aerospace-marks";
@@ -25,6 +26,7 @@
     aerospace-scratchpad,
     aerospace-marks,
     mcpli,
+    mcplifork,
     self,
     ...
   }:
@@ -65,6 +67,7 @@
           aerospace-scratchpad = aerospaceScratchpad.default;
           aerospace-marks = aerospaceMarks.default;
           mcpli = mcpli.packages.${system}.default;
+          mcpliFork = mcplifork.packages.${system}.default;
         };
       overlay = final: prev: {
         co = mkExternalPackages prev prev.system // import (self + /pkgs) prev;

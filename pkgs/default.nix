@@ -11,6 +11,7 @@ pkgs:
   inherit (import ./beads_viewer pkgs) beads_viewer;
   inherit (import ./confluence-cli pkgs) confluence-cli;
   inherit (import ./mcp-cli pkgs) mcp-cli;
+  inherit (import ./putio-cli pkgs) putio-cli;
   inherit (import ./qmd pkgs) qmd;
   inherit (import ./gogcli pkgs) gogcli;
   inherit (import ./goplaces pkgs) goplaces;

@@ -13,18 +13,18 @@ pkgs: {
       hash = "sha256-6GfGlpXJaKZTk2oisN0pcowlo0HS3UQPbs+BQf8nPJY=";
     };
 
-    pnpmDeps = pkgs.fetchPnpmDeps {
+    pnpmDeps = pkgs.pnpm.fetchDeps {
       pname = "putio-cli";
-      inherit version src;
-      fetcherVersion = 1;
+      inherit src;
       hash = "sha256-ZN6/0FtBvdvUsEnEiok0eDtlxhFOweuXE8ZcdvckpL4=";
+      fetcherVersion = 1;
     };
 
     nativeBuildInputs = [
       pkgs.makeBinaryWrapper
       pkgs.nodejs_24
       pkgs.pnpm
-      pkgs.pnpm.configHook
+      pkgs.pnpmConfigHook
     ];
 
     buildPhase = ''

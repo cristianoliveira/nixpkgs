@@ -10,7 +10,7 @@ Using nix flakes
 {
   description = "My ergo nix configuration";
 
-  inputs = { 
+  inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
     conixpkgs = {
       url = "github:cristianoliveira/nixpkgs";
@@ -19,22 +19,19 @@ Using nix flakes
   };
 
   outputs = { self, nixpkgs, conixpkgs, ... }:
-  { 
+  {
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        ({ config, pkgs, ... }: { 
+        ({ config, pkgs, ... }: {
          # Injects conixpkgs into nixpkgs as "co"
          # and then can be referenced as `pkgs.co.ergo`
-         nixpkgs.overlays = [ 
-            (final: prev: { co = import conixpkgs { inherit pkgs; }; })
-          ];
+         nixpkgs.overlays = [ conixpkgs.overlays.default ];
         })
 
-        # Exemplo of installing a package from conixpkgs
+        # Exemple of installing a package from conixpkgs
         ({ config, pkgs, ... }: {
           environment.systemPackages = [
-            pkgs.co.ergoProxy
             pkgs.co.funzzy
           ];
         })
@@ -44,8 +41,7 @@ Using nix flakes
 }
 ```
 
-## Packages available
+### Packages
 
-- [ergo](https://github.com/cristianoliveira/ergo) - A reverse proxy agent for local domain management add subdomains to localhost
-- [funzzy](https://github.com/cristianoliveira/funzzy) - A lightweight watcher that runs command when files change.
-- [sway-setter](https://github.com/cristianoliveira/sway-setter) - A cli for loading sway configurations
+See [Personal packages](./flake.nix) for a list of my personal packages.
+See [External packages](./pkgs) for a list of OSS packages.

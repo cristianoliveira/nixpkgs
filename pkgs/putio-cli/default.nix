@@ -2,6 +2,8 @@
 pkgs: {
   putio-cli = let
     version = "1.0.7";
+    pnpmHook = if pkgs ? pnpmConfigHook then pkgs.pnpmConfigHook else pkgs.pnpm.configHook;
+    fetchPnpmDeps = if pkgs ? fetchPnpmDeps then pkgs.fetchPnpmDeps else pkgs.pnpm.fetchDeps;
   in pkgs.stdenv.mkDerivation rec {
     pname = "putio-cli";
     inherit version;
@@ -13,7 +15,7 @@ pkgs: {
       hash = "sha256-6GfGlpXJaKZTk2oisN0pcowlo0HS3UQPbs+BQf8nPJY=";
     };
 
-    pnpmDeps = pkgs.pnpm.fetchDeps {
+    pnpmDeps = fetchPnpmDeps {
       pname = "putio-cli";
       inherit src;
       hash = "sha256-ZN6/0FtBvdvUsEnEiok0eDtlxhFOweuXE8ZcdvckpL4=";
@@ -24,7 +26,7 @@ pkgs: {
       pkgs.makeBinaryWrapper
       pkgs.nodejs_24
       pkgs.pnpm
-      pkgs.pnpmConfigHook
+      pnpmHook
     ];
 
     buildPhase = ''

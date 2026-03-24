@@ -1,12 +1,12 @@
 # ZeroClaw AI assistant CLI
 pkgs: {
   zeroclaw = let
-    version = "0.1.8";
+    version = "0.6.0";
     src = pkgs.fetchFromGitHub {
       owner = "zeroclaw-labs";
       repo = "zeroclaw";
       rev = "v${version}";
-      hash = "sha256-6EVUk+wp3Rjhk/q2htXq41TMD+rGFO0nJbVWNbLWj5U=";
+      hash = "sha256-MOjCt+TqgPbJK6XVCVnMpFv4+qdVPArsuYpWEEBPt6Q=";
     };
   in pkgs.rustPlatform.buildRustPackage {
     pname = "zeroclaw";

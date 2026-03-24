@@ -24,7 +24,7 @@ pkgs: {
       pkgs.makeBinaryWrapper
       pkgs.nodejs_24
       pkgs.pnpm
-      pkgs.pnpmConfigHook
+      pkgs.pnpm.configHook
     ];
 
     buildPhase = ''

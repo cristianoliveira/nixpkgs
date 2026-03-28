@@ -19,5 +19,6 @@ pkgs:
   inherit (import ./pi pkgs) pi;
   inherit (import ./playwright-cli pkgs) playwright-cli;
   inherit (import ./zeroclaw pkgs) zeroclaw;
+  inherit (import ./zclaw pkgs) zclaw;
   inherit (import ./opensubtitles pkgs) opensubtitles;
 }

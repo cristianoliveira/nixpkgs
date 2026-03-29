@@ -1,0 +1,224 @@
+# Daily Package Update Checker
+# Checks for package updates and creates PRs with update instructions
+name: Daily Package Updates
+
+on:
+  workflow_dispatch:  # Allow manual triggering
+  schedule:
+    - cron: '0 2 * * *'  # Run daily at 2:00 AM UTC
+
+env:
+  CACHIX_CACHE_NAME: ${{ secrets.CACHIX_CACHE_NAME }}
+  CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+jobs:
+  check-updates:
+    name: Check for Package Updates
+    runs-on: ubuntu-latest
+    if: github.repository == 'cristianoliveira/nixpkgs'
+
+    outputs:
+      has-updates: ${{ steps.check-updates.outputs.has-updates }}
+      packages: ${{ steps.check-updates.outputs.packages }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v27
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Setup Cachix for caching
+        if: env.CACHIX_AUTH_TOKEN != ''
+        uses: cachix/cachix-action@v14
+        with:
+          name: ${{ env.CACHIX_CACHE_NAME }}
+          authToken: ${{ env.CACHIX_AUTH_TOKEN }}
+
+      - name: Check for package updates
+        id: check-updates
+        run: |
+          echo "=== Checking for package updates ==="
+
+          # Run the update check script
+          result=$(./scripts/check-package-updates.sh 2>&1)
+
+          # Save the result
+          echo "$result" > update-result.json
+
+          # Parse the result
+          has_updates=$(echo "$result" | jq -r '.packages | length > 0')
+          packages=$(echo "$result" | jq -r '.packages | join(",")')
+
+          echo "has-updates=$has_updates" >> $GITHUB_OUTPUT
+          echo "packages=$packages" >> $GITHUB_OUTPUT
+
+          echo "Has updates: $has_updates"
+          echo "Packages: $packages"
+
+          # Upload the update report
+          if [ -f package-updates.md ]; then
+            echo "::group::Update Report"
+            cat package-updates.md
+            echo "::endgroup::"
+          fi
+
+      - name: Upload update report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-update-report
+          path: |
+            package-updates.md
+            .tmp/update-check/
+          retention-days: 7
+
+      - name: Create/update PR for packages with scripts
+        if: steps.check-updates.outputs.has-updates == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: 'chore: update packages'
+          body-path: package-updates.md
+          branch: chore/package-updates
+          commit-message: 'chore: update packages'
+          labels: dependencies, automated
+          delete-branch: true
+          draft: false
+
+  validate-updates:
+    name: Validate Package Updates
+    runs-on: ubuntu-latest
+    needs: check-updates
+    if: needs.check-updates.outputs.has-updates == 'true'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v27
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Setup Cachix for caching
+        if: env.CACHIX_AUTH_TOKEN != ''
+        uses: cachix/cachix-action@v14
+        with:
+          name: ${{ env.CACHIX_CACHE_NAME }}
+          authToken: ${{ env.CACHIX_AUTH_TOKEN }}
+
+      - name: Build updated packages
+        run: |
+          echo "=== Building updated packages ==="
+
+          packages="${{ needs.check-updates.outputs.packages }}"
+          echo "Packages to build: $packages"
+
+          # Convert comma-separated to array
+          IFS=',' read -ra PKG_ARRAY <<< "$packages"
+
+          build_failures=()
+
+          for pkg in "${PKG_ARRAY[@]}"; do
+            echo "::group::Building $pkg"
+            if nix build ".#$pkg" --print-build-logs; then
+              echo "✓ Successfully built $pkg"
+
+              # Run version check if applicable
+              if [ -f "result/bin/${pkg}" ]; then
+                echo "Version check:"
+                "./result/bin/${pkg}" --version || true
+              elif [ -f "result/bin/zeroclaw" ] && [ "$pkg" == "zeroclaw" ]; then
+                echo "Version check:"
+                "./result/bin/zeroclaw" --version || true
+              elif [ -f "result/bin/zeroclaw" ] && [ "$pkg" == "zclaw" ]; then
+                echo "Version check:"
+                "./result/bin/zeroclaw" --version || true
+              fi
+            else
+              echo "✗ Failed to build $pkg"
+              build_failures+=("$pkg")
+            fi
+            echo "::endgroup::"
+          done
+
+          # Report results
+          if [ ${#build_failures[@]} -gt 0 ]; then
+            echo ""
+            echo "❌ Some packages failed to build:"
+            printf '%s\n' "${build_failures[@]}"
+            exit 1
+          else
+            echo ""
+            echo "✅ All updated packages built successfully!"
+          fi
+
+      - name: Create validation report
+        if: always()
+        run: |
+          cat > validation-report.md <<EOF
+      # Package Update Validation Report
+
+      Generated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+      ## Packages Checked
+
+      ${{ needs.check-updates.outputs.packages }}
+
+      ## Validation Status
+
+      ${{ job.status == 'success' && '✅ All packages validated successfully' || '❌ Some packages failed validation' }}
+
+      ## Next Steps
+
+      - Review the created PR for package updates
+      - Test the packages locally if needed
+      - Merge the PR when satisfied
+      EOF
+
+          cat validation-report.md
+
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: validation-report.md
+          retention-days: 7
+
+  notify-on-failure:
+    name: Notify on Failure
+    runs-on: ubuntu-latest
+    needs: [check-updates, validate-updates]
+    if: failure()
+
+    steps:
+      - name: Create failure summary
+        run: |
+          cat <<EOF
+      ## Package Update Check Failed
+
+      The daily package update check has failed. Please investigate:
+
+      - Check the workflow logs for details
+      - Review the uploaded artifacts for error messages
+      - Check if package URLs or release formats have changed
+      EOF
+
+      - name: Comment on issue (if configured)
+        if: false  # Disabled by default, enable with an issue number
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: 1,  # Replace with your tracking issue number
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '## Package Update Check Failed\n\nThe daily package update check failed. Please investigate the workflow logs.'
+            })

@@ -16,11 +16,29 @@ Periodic Nix package validation that runs every 3 hours to catch issues with ext
 ### `daily-package-updates.yml` (New!)
 Daily package update checker that:
 - Runs automatically every day at 2:00 AM UTC
+- Can be triggered manually with options
 - Checks for updates in packages that have update scripts
 - Checks for new releases of Rust packages on GitHub
 - Generates detailed update reports with instructions
 - Creates PRs for packages that have update scripts
 - Validates that updated packages build correctly
+
+#### Manual Trigger Options
+
+When running manually from GitHub Actions, you can specify:
+
+- **skip-validation** (default: `false`)
+  - `true`: Skip building packages, just generate the report
+  - `false`: Build packages to validate updates
+
+- **dry-run** (default: `false`)
+  - `true`: Don't create a PR, just generate the report
+  - `false`: Create a PR with updates
+
+Example use cases:
+- **Quick check**: Run with `dry-run=true` to see what updates are available without creating a PR
+- **Report only**: Run with `skip-validation=true` to just see update reports without building
+- **Full update**: Run with defaults to check, validate, and create a PR
 
 ## Package Update Script
 
@@ -107,6 +125,16 @@ This will:
 - Check all packages for updates
 - Generate `package-updates.md` report
 - Output JSON with packages that have updates
+
+#### Manual Trigger from GitHub
+
+1. Go to the **Actions** tab in your repository
+2. Select **"Daily Package Updates"** workflow
+3. Click **"Run workflow"** button
+4. Configure options:
+   - Skip validation: `false` (build packages) or `true` (just report)
+   - Dry run: `false` (create PR) or `true` (just report)
+5. Click **"Run workflow"** button to start
 
 ### Disabling the Workflow
 

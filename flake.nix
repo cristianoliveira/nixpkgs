@@ -79,8 +79,50 @@
 
           # Import local packages from centralized pkgs/default.nix
           localPackages = import (self + /pkgs) pkgs;
+
+          # Development shell with useful tools
+          devShell = pkgs.mkShell {
+            buildInputs = with pkgs; [
+              # Nix-related tools
+              nixpkgs-fmt
+              nix-prefetch-scripts
+              nix-prefetch-github
+
+              # GitHub Actions workflow validation
+              yamllint
+
+              # GitHub CLI
+              gh
+
+              # JSON tools
+              jq
+
+              # Common utilities
+              bash
+              curl
+              git
+            ];
+
+            shellHook = ''
+              echo "🚀 Welcome to Nixpkgs development environment"
+              echo ""
+              echo "Available tools:"
+              echo "  - nixpkgs-fmt: Format Nix files"
+              echo "  - yamllint: Validate YAML files"
+              echo "  - jq: Process JSON data"
+              echo "  - gh: GitHub CLI"
+              echo ""
+              echo "Common commands:"
+              echo "  - nix flake check: Check flake validity"
+              echo "  - nix build .#<package>: Build a package"
+              echo "  - ./scripts/check-package-updates.sh: Check for package updates"
+              echo "  - yamllint .github/workflows/*.yml: Validate workflows"
+              echo ""
+            '';
+          };
         in {
           packages = externalPackages // localPackages;
+          devShells.default = devShell;
         });
     in
       perSystem // {

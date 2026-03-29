@@ -1,0 +1,21 @@
+extends: default
+
+rules:
+  line-length:
+    max: 150
+    level: warning
+  document-start:
+    present: false
+  truthy:
+    check-keys: false
+  comments:
+    min-spaces-from-content: 1
+  braces:
+    max-spaces-inside: 1
+  brackets:
+    max-spaces-inside: 1
+  indentation:
+    spaces: 2
+    indent-sequences: false
+    ignore:  # Disable strict indentation checking for GitHub Actions workflows
+      - .github/workflows/*.yml

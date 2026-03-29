@@ -128,14 +128,26 @@ check_rust_package_update() {
 
   log_info "Current version: $current_version"
 
-  # Get latest release from GitHub API
+  # Get latest release from GitHub API with retry logic
   local api_url="https://api.github.com/repos/${repo_owner}/${repo_name}/releases/latest"
   local latest_tag latest_version
+  local max_retries=3
+  local retry_count=0
 
-  if ! latest_tag=$(curl -s "$api_url" | jq -r '.tag_name'); then
-    log_error "Failed to fetch latest release for ${repo_owner}/${repo_name}"
-    return 1
-  fi
+  while [ $retry_count -lt $max_retries ]; do
+    if ! latest_tag=$(curl -s -f "$api_url" 2>&1 | jq -r '.tag_name'); then
+      retry_count=$((retry_count + 1))
+      if [ $retry_count -lt $max_retries ]; then
+        log_warning "GitHub API request failed (attempt $retry_count/$max_retries), retrying..."
+        sleep 2
+        continue
+      else
+        log_warning "Failed to fetch latest release for ${repo_owner}/${repo_name} after $max_retries attempts"
+        return 1
+      fi
+    fi
+    break
+  done
 
   if [[ "$latest_tag" == "null" ]] || [[ -z "$latest_tag" ]]; then
     log_warning "No releases found for ${repo_owner}/${repo_name}"
@@ -180,15 +192,46 @@ generate_rust_update_instructions() {
   local current_version
   current_version=$(grep -E '^    version = "' "$pkg_file" | sed 's/.*version = "\([^"]*\)".*/\1/')
 
-  # Get latest version
+  # Get latest version with error handling
   local api_url="https://api.github.com/repos/${repo_owner}/${repo_name}/releases/latest"
   local latest_tag latest_version
-  latest_tag=$(curl -s "$api_url" | jq -r '.tag_name')
+  local max_retries=3
+  local retry_count=0
+
+  while [ $retry_count -lt $max_retries ]; do
+    if ! latest_tag=$(curl -s -f "$api_url" 2>&1 | jq -r '.tag_name'); then
+      retry_count=$((retry_count + 1))
+      if [ $retry_count -lt $max_retries ]; then
+        log_warning "Failed to fetch release for ${repo_owner}/${repo_name}, retrying..."
+        sleep 2
+        continue
+      else
+        log_warning "Could not fetch release info for $pkg"
+        return 1
+      fi
+    fi
+    break
+  done
+
   latest_version="${latest_tag#v}"
 
-  # Get latest commit SHA
+  # Get latest commit SHA with error handling
   local commit_sha
-  commit_sha=$(curl -s "https://api.github.com/repos/${repo_owner}/${repo_name}/commits/master" | jq -r '.sha')
+  retry_count=0
+  while [ $retry_count -lt $max_retries ]; do
+    if ! commit_sha=$(curl -s -f "https://api.github.com/repos/${repo_owner}/${repo_name}/commits/master" 2>&1 | jq -r '.sha'); then
+      retry_count=$((retry_count + 1))
+      if [ $retry_count -lt $max_retries ]; then
+        log_warning "Failed to fetch commit for ${repo_owner}/${repo_name}, retrying..."
+        sleep 2
+        continue
+      else
+        log_warning "Could not fetch commit SHA for $pkg"
+        commit_sha="<fetch-latest-sha-from-github>"
+      fi
+    fi
+    break
+  done
 
   echo "### $pkg"
   echo ""
@@ -272,11 +315,16 @@ main() {
 
   # Get list of all local packages
   local all_packages
-  all_packages=$(bash "${SCRIPT_DIR}/list-packages.sh" --local)
+  if ! all_packages=$(bash "${SCRIPT_DIR}/list-packages.sh" --local 2>&1); then
+    log_error "Failed to get package list"
+    printf '{"packages":[]}\n'
+    exit 0
+  fi
 
   if [[ -z "$all_packages" ]]; then
-    log_error "No local packages found"
-    exit 1
+    log_warning "No local packages found"
+    printf '{"packages":[]}\n'
+    exit 0
   fi
 
   # Clear report file
@@ -362,12 +410,11 @@ EOF
 
     # Print JSON to stdout for GitHub Actions to capture
     cat "${TMP_DIR}/updates.json"
-
-    exit 0
   else
     printf '{"packages":[]}\n'
-    exit 0
   fi
+
+  exit 0
 }
 
 # Run main function

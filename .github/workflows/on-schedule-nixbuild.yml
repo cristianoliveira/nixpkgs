@@ -55,7 +55,7 @@ jobs:
           # Build local packages first (no retry needed as they're local)
           echo "Building local packages..."
           local_packages=($(./scripts/list-packages.sh --local))
-          
+
           if [ ${#local_packages[@]} -eq 0 ]; then
             echo "⚠️ No local packages found"
           else
@@ -78,7 +78,7 @@ jobs:
           echo ""
           echo "Building external packages..."
           external_packages=($(./scripts/list-packages.sh --external))
-          
+
           if [ ${#external_packages[@]} -eq 0 ]; then
             echo "⚠️ No external packages found"
           else

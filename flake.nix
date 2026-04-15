@@ -17,49 +17,30 @@
     aerospace-marks.url = "github:cristianoliveira/aerospace-marks";
   };
 
-  outputs = {
-    nixpkgs,
-    utils,
-    sway-setter,
-    funzzy,
-    ergo,
-    aerospace-scratchpad,
-    aerospace-marks,
-    mcpli,
-    mcplifork,
-    self,
-    ...
-  }:
+  outputs =
+    { nixpkgs
+    , utils
+    , sway-setter
+    , funzzy
+    , ergo
+    , aerospace-scratchpad
+    , aerospace-marks
+    , mcpli
+    , mcplifork
+    , self
+    , ...
+    }:
     let
       mkExternalPackages = pkgs: system:
         let
           swaysetterPkgs = import sway-setter { inherit pkgs; };
-          funzzyDarwin =
-            if pkgs.stdenv.isDarwin
-            then
-              pkgs.darwin // {
-                apple_sdk = pkgs.darwin.apple_sdk // {
-                  frameworks = pkgs.darwin.apple_sdk.frameworks // {
-                    CoreServices = pkgs.libiconv;
-                  };
-                };
-              }
-            else {
-              apple_sdk.frameworks.CoreServices = pkgs.libiconv;
-            };
-          funzzyPkg = pkgs.callPackage (funzzy + /nix/package.nix) {
-            darwin = funzzyDarwin;
-            rustPlatform = pkgs.rustPlatform // {
-              buildRustPackage = args:
-                pkgs.rustPlatform.buildRustPackage (args // {
-                  cargoHash = "sha256-n9UHyr7W4hrN0+2dsYAYqkP/uzBv74p5XHU0g2MReJY=";
-                });
-            };
-          };
+          # Use local derivation for funzzy to avoid upstream nixpkgs compatibility churn.
+          funzzyPkg = (import (self + /pkgs/funzzy) pkgs).funzzy;
           ergoPkgs = import ergo { inherit pkgs; };
           aerospaceScratchpad = import aerospace-scratchpad { inherit pkgs; };
           aerospaceMarks = import aerospace-marks { inherit pkgs; };
-        in {
+        in
+        {
           sway-setter = swaysetterPkgs.default;
           funzzy = funzzyPkg;
           fzz = funzzyPkg;
@@ -120,18 +101,19 @@
               echo ""
             '';
           };
-        in {
+        in
+        {
           packages = externalPackages // localPackages;
           devShells.default = devShell;
         });
     in
-      perSystem // {
-        overlays = { default = overlay; };
-        lib = {
-          withOverlays = system: overlays: import nixpkgs {
-            inherit system;
-            overlays = [ overlay ] ++ overlays;
-          };
+    perSystem // {
+      overlays = { default = overlay; };
+      lib = {
+        withOverlays = system: overlays: import nixpkgs {
+          inherit system;
+          overlays = [ overlay ] ++ overlays;
         };
       };
+    };
 }

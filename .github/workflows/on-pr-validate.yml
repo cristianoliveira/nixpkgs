@@ -93,7 +93,7 @@ jobs:
             # Dynamic discovery of local packages
             echo "Discovering local packages..."
             local_packages=($(./scripts/list-packages.sh --local))
-            
+
             if [ ${#local_packages[@]} -eq 0 ]; then
               echo "⚠️ No local packages found"
             else
@@ -165,7 +165,7 @@ jobs:
           # Dynamic discovery of local packages for smoke testing
           echo "Discovering local packages..."
           local_packages=($(./scripts/list-packages.sh --local))
-          
+
           if [ ${#local_packages[@]} -eq 0 ]; then
             echo "⚠️ No local packages found for smoke testing"
           else

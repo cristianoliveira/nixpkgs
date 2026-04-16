@@ -21,4 +21,5 @@ pkgs:
   inherit (import ./zeroclaw pkgs) zeroclaw;
   inherit (import ./zclaw pkgs) zclaw;
   inherit (import ./opensubtitles pkgs) opensubtitles;
+  inherit (import ./teamcity-cli pkgs) teamcity-cli;
 }

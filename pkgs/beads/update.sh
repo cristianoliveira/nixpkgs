@@ -1,36 +1,36 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set - euo pipefail
 
-repo="steveyegge/beads"
+  repo="steveyegge/beads"
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 default_nix="${script_dir}/default.nix"
 
 if ! command -v curl >/dev/null 2>&1 || ! command -v jq >/dev/null 2>&1 || ! command -v nix-prefetch-url >/dev/null 2>&1 || ! command -v nix >/dev/null 2>&1; then
-	echo "error: requires curl, jq, nix-prefetch-url, and nix in PATH" >&2
-	exit 1
+echo "error: requires curl, jq, nix-prefetch-url, and nix in PATH" >&2
+exit 1
 fi
 
 if [[ $# -gt 1 ]]; then
-	echo "usage: $0 [version]" >&2
-	exit 1
+echo "usage: $0 [version]" >&2
+exit 1
 fi
 
 if [[ $# -eq 1 ]]; then
-	version="${1#v}"
+version="${1#v}"
 else
-	latest_tag="$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest" | jq -r '.tag_name')"
-	if [[ -z "${latest_tag}" || "${latest_tag}" == "null" ]]; then
-		echo "error: failed to determine latest release tag from GitHub API" >&2
-		exit 1
-	fi
-	version="${latest_tag#v}"
+latest_tag="$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest" | jq -r '.tag_name')"
+if [[ -z "${latest_tag}" || "${latest_tag}" == "null" ]]; then
+echo "error: failed to determine latest release tag from GitHub API" >&2
+exit 1
+fi
+version="${latest_tag#v}"
 fi
 
 prefetch_sri() {
-	local url="$1"
-	local hash
-	hash="$(nix-prefetch-url --type sha256 "$url")"
-	nix hash convert --hash-algo sha256 "$hash"
+local url="$1"
+local hash
+hash="$(nix-prefetch-url --type sha256 "$url")"
+nix hash convert --hash-algo sha256 "$hash"
 }
 
 base_url="https://github.com/${repo}/releases/download/v${version}"
@@ -59,7 +59,7 @@ linux_amd64 = sys.argv[6]
 content = file_path.read_text()
 
 content, version_count = re.subn(
-    r'(?m)^(\s*version = ")[^"]+(";)$',
+r'(?m)^(\s*version = ")[^"]+(";)$',
     rf'\g<1>{version}\g<2>',
     content,
     count=1,
@@ -100,16 +100,16 @@ expected_version="$(nix eval --raw .#beads.version)"
 version_output="$(nix run .#beads -- --version 2>&1)"
 
 if [[ "${version_output}" =~ ([0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z]+)*) ]]; then
-	runtime_version="${BASH_REMATCH[1]}"
+runtime_version="${BASH_REMATCH[1]}"
 else
-	echo "error: failed to extract version from 'nix run .#beads -- --version' output: ${version_output}" >&2
-	exit 1
+echo "error: failed to extract version from 'nix run .#beads -- --version' output: ${version_output}" >&2
+exit 1
 fi
 
 if [[ "${runtime_version}" != "${expected_version}" ]]; then
-	echo "error: beads runtime version mismatch (expected ${expected_version}, got ${runtime_version})" >&2
-	echo "version output: ${version_output}" >&2
-	exit 1
+echo "error: beads runtime version mismatch (expected ${expected_version}, got ${runtime_version})" >&2
+echo "version output: ${version_output}" >&2
+exit 1
 fi
 
 echo "Validated beads runtime version: ${runtime_version}"

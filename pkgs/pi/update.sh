@@ -1,36 +1,36 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set - euo pipefail
 
-repo="badlogic/pi-mono"
+  repo="badlogic/pi-mono"
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 default_nix="${script_dir}/default.nix"
 
 if ! command -v curl >/dev/null 2>&1 || ! command -v jq >/dev/null 2>&1 || ! command -v nix >/dev/null 2>&1 || ! command -v python3 >/dev/null 2>&1; then
-	echo "error: requires curl, jq, nix, and python3 in PATH" >&2
-	exit 1
+echo "error: requires curl, jq, nix, and python3 in PATH" >&2
+exit 1
 fi
 
 if [[ $# -gt 1 ]]; then
-	echo "usage: $0 [version|latest]" >&2
-	exit 1
+echo "usage: $0 [version|latest]" >&2
+exit 1
 fi
 
 requested="${1:-latest}"
 
 if [[ -n "${requested}" && "${requested}" != "latest" && "${requested}" != "undefined" ]]; then
-	version="${requested#v}"
+version="${requested#v}"
 else
-	latest_tag="$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest" | jq -r '.tag_name')"
-	if [[ -z "${latest_tag}" || "${latest_tag}" == "null" ]]; then
-		echo "error: failed to determine latest release tag from GitHub API" >&2
-		exit 1
-	fi
-	version="${latest_tag#v}"
+latest_tag="$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest" | jq -r '.tag_name')"
+if [[ -z "${latest_tag}" || "${latest_tag}" == "null" ]]; then
+echo "error: failed to determine latest release tag from GitHub API" >&2
+exit 1
+fi
+version="${latest_tag#v}"
 fi
 
 prefetch_sri() {
-	local url="$1"
-	nix store prefetch-file --json "$url" | jq -r '.hash'
+local url="$1"
+nix store prefetch-file --json "$url" | jq -r '.hash'
 }
 
 base_url="https://github.com/${repo}/releases/download/v${version}"
@@ -59,7 +59,7 @@ linux_x64 = sys.argv[6]
 content = file_path.read_text()
 
 content, version_count = re.subn(
-    r'(?m)^(\s*version = ")[^"]+(";)$',
+r'(?m)^(\s*version = ")[^"]+(";)$',
     rf'\g<1>{version}\g<2>',
     content,
     count=1,
@@ -92,3 +92,4 @@ echo "- linux arm64:  ${linux_arm64_hash}"
 echo "- linux x64:    ${linux_x64_hash}"
 
 echo "Done."
+

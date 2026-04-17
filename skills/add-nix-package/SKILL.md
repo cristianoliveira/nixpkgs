@@ -15,6 +15,38 @@ Use this workflow to add a new package to this repository with the same conventi
    - Inspect 1-2 similar packages in `pkgs/<name>/default.nix`.
    - Check `./skills/add-nix-package/references/` depending on stack of the package.
 
+   - Search GitHub for proven patterns (recommended)
+     - Start with `NixOS/nixpkgs` (highest signal), then broaden to all of GitHub if needed.
+
+     - Search in `NixOS/nixpkgs` first
+       - Find an exact upstream repo packaged in nixpkgs:
+         - `gh search code "owner/repo" -R NixOS/nixpkgs --limit 20`
+       - Find patterns by builder:
+         - `gh search code "buildGoModule" -R NixOS/nixpkgs --limit 20`
+         - `gh search code "buildRustPackage" -R NixOS/nixpkgs --limit 20`
+         - `gh search code "buildNpmPackage" -R NixOS/nixpkgs --limit 20`
+       - Find patterns by artifact type:
+         - `gh search code "fetchzip" -R NixOS/nixpkgs --limit 20`
+         - `gh search code "installShellFiles" -R NixOS/nixpkgs --limit 20`
+
+     - If nixpkgs has no close match, broaden to all GitHub
+       - Use GitHub search qualifiers you already use (`path:*.nix <appname>`) and translate them into `gh` flags:
+         - GitHub web:
+           - `path:*.nix <appname>`
+         - `gh` equivalent:
+           - `gh search code "<appname>" --extension nix --limit 50`
+
+       - Same pattern queries, but without `-R NixOS/nixpkgs`:
+         - `gh search code "buildRustPackage" --extension nix --limit 50`
+       - Prefer narrowing by owner/org where possible:
+         - `gh search code "buildRustPackage" --extension nix --owner NixOS --limit 50`
+         - `gh search code "buildRustPackage" --extension nix --owner numtide --limit 50`
+       - Also useful: search by path (matches file path instead of file content)
+         - `gh search code "package.nix" --match path --limit 50`
+         - `gh search code "default.nix" --match path --limit 50`
+
+     - When you find a close match, mirror the structure and phases, then adapt variables (version/url/hash/meta).
+
 2. Create the package file
    - Create `pkgs/<mypackage>/default.nix`.
    - Export an attribute set from that file:

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-set - euo pipefail
+set -euo pipefail
 
-  repo="badlogic/pi-mono"
+repo="badlogic/pi-mono"
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 default_nix="${script_dir}/default.nix"
 

@@ -1,6 +1,6 @@
 { pkgs ? import <nixpkgs> {}, ... }: {
   pi = let
-    version = "0.67.2";
+    version = "0.67.68";
 
     # Determine the architecture-specific file
     archFile = if pkgs.stdenv.isDarwin then
@@ -15,10 +15,10 @@
     # nix-prefetch-url https://github.com/badlogic/pi-mono/releases/download/v${version}/pi-linux-arm64.tar.gz
     # nix-prefetch-url https://github.com/badlogic/pi-mono/releases/download/v${version}/pi-linux-x64.tar.gz
     sha256 = if pkgs.stdenv.isDarwin then
-      if pkgs.stdenv.isAarch64 then "sha256-cKacC7LRsokeLGnz0tNRHQeLFAEVBxO/D2ZV/Z9qvIc="
-      else "sha256-s0fVcVdMtt5sDEGxxC/3PMT9a5YeGfTGbQHxpKQ5iAc="
-    else if pkgs.stdenv.isAarch64 then "sha256-h9kIaZcXIjHGiuUqSRjeqc+VcDUD4nDMrBsgaAxwkYY="
-    else "sha256-PZzEKgijmrK8jvu46MkoHQs1G72NRJpwGA2wU2L4V8E=";
+      if pkgs.stdenv.isAarch64 then "sha256-UfwEZO8GRZ46yKjrynAzYKne/tGrlrXMuL+4DwyD+PI="
+      else "sha256-GjGrYC7nsJCv8obhI91TUxKIpEup6mxGBCLO5f8apSY="
+    else if pkgs.stdenv.isAarch64 then "sha256-JCBXi7u1429TKG6W8QeAN10cXHmT/u41W8l68eRFagg="
+    else "sha256-hbg5hQQvr/5jU4bA27prd0Us74OP2cbWd1p5xmfCFyo=";
 
     src = pkgs.fetchurl {
       url = "https://github.com/badlogic/pi-mono/releases/download/v${version}/${archFile}";

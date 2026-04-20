@@ -81,6 +81,27 @@ jobs:
       - name: Build local packages
         run: |
           echo "=== Building local packages ==="
+          current_system=$(nix eval --impure --expr builtins.currentSystem --raw)
+
+          supports_current_system() {
+            local pkg="$1"
+            local platforms
+
+            platforms=$(nix eval --json ".#${pkg}.meta.platforms" 2>/dev/null | jq -r '.[]?' || true)
+
+            if [ -z "$platforms" ]; then
+              return 0
+            fi
+
+            while IFS= read -r platform; do
+              if [ "$platform" = "$current_system" ]; then
+                return 0
+              fi
+            done <<< "$platforms"
+
+            return 1
+          }
+
           # Dynamic package discovery - automatically discovers local packages from flake outputs
           echo "Discovering local packages..."
           packages=($(./scripts/list-packages.sh --local))
@@ -92,6 +113,12 @@ jobs:
 
           for pkg in "${packages[@]}"; do
             echo "::group::Building $pkg"
+            if ! supports_current_system "$pkg"; then
+              echo "⚠️ Skipping $pkg on $current_system (platform not supported)"
+              echo "::endgroup::"
+              continue
+            fi
+
             # Skip funzzy packages on macOS
             if [[ "${{ matrix.os }}" == "macos-latest" ]] && [[ "$pkg" =~ ^(funzzy|funzzyNightly|fzz|fzzNightly)$ ]]; then
               echo "⚠️ Skipping $pkg on macOS (known compatibility issue)"
@@ -113,6 +140,26 @@ jobs:
         # Test that all local packages can execute and respond to --help/--version
         run: |
           echo "=== Running smoke tests for local packages ==="
+          current_system=$(nix eval --impure --expr builtins.currentSystem --raw)
+
+          supports_current_system() {
+            local pkg="$1"
+            local platforms
+
+            platforms=$(nix eval --json ".#${pkg}.meta.platforms" 2>/dev/null | jq -r '.[]?' || true)
+
+            if [ -z "$platforms" ]; then
+              return 0
+            fi
+
+            while IFS= read -r platform; do
+              if [ "$platform" = "$current_system" ]; then
+                return 0
+              fi
+            done <<< "$platforms"
+
+            return 1
+          }
 
           # Dynamic discovery of local packages
           local_packages=($(./scripts/list-packages.sh --local))
@@ -124,6 +171,12 @@ jobs:
 
           for pkg in "${local_packages[@]}"; do
             echo "::group::Testing $pkg"
+            if ! supports_current_system "$pkg"; then
+              echo "⚠️ Skipping $pkg on $current_system (platform not supported)"
+              echo "::endgroup::"
+              continue
+            fi
+
             # Skip funzzy packages on macOS
             if [[ "${{ matrix.os }}" == "macos-latest" ]] && [[ "$pkg" =~ ^(funzzy|funzzyNightly|fzz|fzzNightly)$ ]]; then
               echo "⚠️ Skipping $pkg smoke test on macOS (known compatibility issue)"
@@ -189,6 +242,26 @@ jobs:
         # Use retry logic for network operations
         run: |
           echo "=== Building external flake packages ==="
+          current_system=$(nix eval --impure --expr builtins.currentSystem --raw)
+
+          supports_current_system() {
+            local pkg="$1"
+            local platforms
+
+            platforms=$(nix eval --json ".#${pkg}.meta.platforms" 2>/dev/null | jq -r '.[]?' || true)
+
+            if [ -z "$platforms" ]; then
+              return 0
+            fi
+
+            while IFS= read -r platform; do
+              if [ "$platform" = "$current_system" ]; then
+                return 0
+              fi
+            done <<< "$platforms"
+
+            return 1
+          }
 
           # Dynamic discovery of external packages
           echo "Discovering external packages..."
@@ -201,6 +274,12 @@ jobs:
 
           for pkg in "${packages[@]}"; do
             echo "::group::Building $pkg"
+            if ! supports_current_system "$pkg"; then
+              echo "⚠️ Skipping $pkg on $current_system (platform not supported)"
+              echo "::endgroup::"
+              continue
+            fi
+
             # Skip funzzy packages on macOS
             if [[ "${{ matrix.os }}" == "macos-latest" ]] && [[ "$pkg" =~ ^(funzzy|funzzyNightly|fzz|fzzNightly)$ ]]; then
               echo "⚠️ Skipping $pkg on macOS (known compatibility issue)"
@@ -222,15 +301,8 @@ jobs:
                   sleep 5
                 else
                   echo "✗ Failed to build $pkg after $max_retries attempts"
-                  # Some external packages may not support all platforms
-                  if [[ "$pkg" == *"aerospace"* ]] && [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
-                    echo "⚠️ Aerospace packages may not support Linux (acceptable)"
-                  elif [[ "$pkg" == *"sway"* ]] && [[ "${{ matrix.os }}" == "macos-latest" ]]; then
-                    echo "⚠️ Sway packages are Linux-only (acceptable)"
-                  else
-                    echo "::endgroup::"
-                    exit 1
-                  fi
+                  echo "::endgroup::"
+                  exit 1
                 fi
               fi
             done
@@ -241,6 +313,26 @@ jobs:
         # Test that external binaries can execute
         run: |
           echo "=== Running smoke tests for external packages ==="
+          current_system=$(nix eval --impure --expr builtins.currentSystem --raw)
+
+          supports_current_system() {
+            local pkg="$1"
+            local platforms
+
+            platforms=$(nix eval --json ".#${pkg}.meta.platforms" 2>/dev/null | jq -r '.[]?' || true)
+
+            if [ -z "$platforms" ]; then
+              return 0
+            fi
+
+            while IFS= read -r platform; do
+              if [ "$platform" = "$current_system" ]; then
+                return 0
+              fi
+            done <<< "$platforms"
+
+            return 1
+          }
 
           # Dynamic discovery of external packages
           external_packages=($(./scripts/list-packages.sh --external))
@@ -252,14 +344,8 @@ jobs:
 
           for pkg in "${external_packages[@]}"; do
             echo "::group::Testing $pkg"
-            # Platform-specific skip logic
-            if [[ "$pkg" == *"aerospace"* ]] && [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
-              echo "⚠️ Aerospace packages may not support Linux (skipping)"
-              echo "::endgroup::"
-              continue
-            fi
-            if [[ "$pkg" == *"sway"* ]] && [[ "${{ matrix.os }}" == "macos-latest" ]]; then
-              echo "⚠️ Sway packages are Linux-only (skipping)"
+            if ! supports_current_system "$pkg"; then
+              echo "⚠️ Skipping $pkg on $current_system (platform not supported)"
               echo "::endgroup::"
               continue
             fi

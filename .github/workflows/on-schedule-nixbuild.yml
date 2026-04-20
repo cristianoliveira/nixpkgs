@@ -48,6 +48,26 @@ jobs:
       - name: Build all packages
         run: |
           echo "=== Building all packages ==="
+          current_system=$(nix eval --impure --expr builtins.currentSystem --raw)
+
+          supports_current_system() {
+            local pkg="$1"
+            local platforms
+
+            platforms=$(nix eval --json ".#${pkg}.meta.platforms" 2>/dev/null | jq -r '.[]?' || true)
+
+            if [ -z "$platforms" ]; then
+              return 0
+            fi
+
+            while IFS= read -r platform; do
+              if [ "$platform" = "$current_system" ]; then
+                return 0
+              fi
+            done <<< "$platforms"
+
+            return 1
+          }
 
           # Dynamic package discovery - automatically discovers packages from flake outputs
           echo "Discovering packages via scripts/list-packages.sh..."
@@ -61,6 +81,12 @@ jobs:
           else
             for pkg in "${local_packages[@]}"; do
               echo "::group::Building local package: $pkg"
+              if ! supports_current_system "$pkg"; then
+                echo "⚠️ Skipping $pkg on $current_system (platform not supported)"
+                echo "::endgroup::"
+                continue
+              fi
+
               if nix build ".#$pkg" --print-build-logs; then
                 echo "✓ Successfully built $pkg"
               else
@@ -84,6 +110,12 @@ jobs:
           else
             for pkg in "${external_packages[@]}"; do
               echo "::group::Building external package: $pkg"
+              if ! supports_current_system "$pkg"; then
+                echo "⚠️ Skipping $pkg on $current_system (platform not supported)"
+                echo "::endgroup::"
+                continue
+              fi
+
               # Retry network operations up to 3 times
               max_retries=3
               retry_count=0

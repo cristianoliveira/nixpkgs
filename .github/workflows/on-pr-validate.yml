@@ -121,26 +121,50 @@ jobs:
       - name: Build affected packages
         run: |
           echo "=== Building affected packages ==="
+          current_system=$(nix eval --impure --expr builtins.currentSystem --raw)
           packages="${{ steps.packages.outputs.packages }}"
 
-          if [ "$packages" = "*" ]; then
-            echo "Building all packages using make build-all (dynamic discovery)..."
-            # The Makefile uses scripts/list-packages.sh for dynamic discovery
-            make build-all
-          else
-            # Build specific packages that were detected as changed
-            for pkg in $packages; do
-              echo "::group::Building $pkg"
-              if nix build ".#$pkg" --print-build-logs; then
-                echo "✓ Successfully built $pkg"
-              else
-                echo "✗ Failed to build $pkg"
-                echo "::endgroup::"
-                exit 1
+          supports_current_system() {
+            local pkg="$1"
+            local platforms
+
+            platforms=$(nix eval --json ".#${pkg}.meta.platforms" 2>/dev/null | jq -r '.[]?' || true)
+
+            if [ -z "$platforms" ]; then
+              return 0
+            fi
+
+            while IFS= read -r platform; do
+              if [ "$platform" = "$current_system" ]; then
+                return 0
               fi
-              echo "::endgroup::"
-            done
+            done <<< "$platforms"
+
+            return 1
+          }
+
+          if [ "$packages" = "*" ]; then
+            echo "Building all packages for $current_system via dynamic discovery..."
+            packages=$(./scripts/list-packages.sh --all)
           fi
+
+          for pkg in $packages; do
+            echo "::group::Building $pkg"
+            if ! supports_current_system "$pkg"; then
+              echo "⚠️ Skipping $pkg on $current_system (platform not supported)"
+              echo "::endgroup::"
+              continue
+            fi
+
+            if nix build ".#$pkg" --print-build-logs; then
+              echo "✓ Successfully built $pkg"
+            else
+              echo "✗ Failed to build $pkg"
+              echo "::endgroup::"
+              exit 1
+            fi
+            echo "::endgroup::"
+          done
 
   # JOB 3: Quick smoke tests
   # Fast validation that packages execute correctly
@@ -161,6 +185,26 @@ jobs:
       - name: Run quick smoke tests
         run: |
           echo "=== Running quick smoke tests ==="
+          current_system=$(nix eval --impure --expr builtins.currentSystem --raw)
+
+          supports_current_system() {
+            local pkg="$1"
+            local platforms
+
+            platforms=$(nix eval --json ".#${pkg}.meta.platforms" 2>/dev/null | jq -r '.[]?' || true)
+
+            if [ -z "$platforms" ]; then
+              return 0
+            fi
+
+            while IFS= read -r platform; do
+              if [ "$platform" = "$current_system" ]; then
+                return 0
+              fi
+            done <<< "$platforms"
+
+            return 1
+          }
 
           # Dynamic discovery of local packages for smoke testing
           echo "Discovering local packages..."
@@ -171,6 +215,12 @@ jobs:
           else
             for pkg in "${local_packages[@]}"; do
               echo "::group::Testing $pkg"
+              if ! supports_current_system "$pkg"; then
+                echo "⚠️ Skipping $pkg on $current_system (platform not supported)"
+                echo "::endgroup::"
+                continue
+              fi
+
               if nix build ".#$pkg" --print-build-logs; then
                 # Find the binary and test it
                 binary=$(find ./result/bin -type f -executable | head -1)

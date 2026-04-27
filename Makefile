@@ -27,6 +27,10 @@ help: ## Lists the available commands. Add a comment with '##' to describe a com
 list-packages: ## List all packages from the flake (dynamic discovery)
 	@./scripts/list-packages.sh --format newline
 
+.PHONY: check-release-updates
+check-release-updates: ## Check GitHub release updates for packages with update.sh
+	@./scripts/check-release-updates.sh --format table
+
 .PHONY: list-local
 list-local: ## List only local packages
 	@./scripts/list-packages.sh --local --format newline

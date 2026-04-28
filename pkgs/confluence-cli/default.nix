@@ -1,19 +1,19 @@
 # CLI for Confluence
 pkgs: {
   confluence-cli = let
-    version = "1.13.0";
+    version = "1.33.2";
     src = pkgs.fetchFromGitHub {
       owner = "pchuri";
       repo = "confluence-cli";
       rev = "v${version}";
       # Update sha256 as needed - use empty string "" and nix will tell you the correct one
       # nix-prefetch-url https://github.com/pchuri/confluence-cli/archive/refs/tags/v${version}.tar.gz
-      sha256 = "sha256-uBViaGC5pqYl6eRf6oO98OQV/rdxevZ9PKN6KQpmMPE=";
+      sha256 = "sha256-P9eqTfKYFNFtMmpONDnjw9NlTj/OiihUoNpLDUIX4lg=";
     };
   in pkgs.buildNpmPackage {
     pname = "confluence-cli";
     inherit version src;
-    npmDepsHash = "sha256-gt/xHaP0PMcgTVlW2GYNnT9UyI9Ay2SksDTw2yHsBsU=";
+    npmDepsHash = "sha256-xSqo4+rC+OK+uIi+1pWeL+e1FiwFfwNUI9IDNRVtq/U=";
     dontNpmBuild = true;
     npmPackFlags = [ "--ignore-scripts" ];
     meta = with pkgs.lib; {

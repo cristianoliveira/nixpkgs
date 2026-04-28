@@ -1,7 +1,7 @@
 # gogcli - Claude Code native browser extension and iOS app integration
 pkgs: {
   gogcli = let
-    version = "0.11.0";
+    version = "0.13.0";
 
     # Determine the architecture-specific file
     archFile = if pkgs.stdenv.isDarwin then
@@ -15,10 +15,10 @@ pkgs: {
     # nix-prefetch-url https://github.com/steipete/gogcli/releases/download/v0.11.0/gogcli_0.11.0_linux_arm64.tar.gz
     # nix-prefetch-url https://github.com/steipete/gogcli/releases/download/v0.11.0/gogcli_0.11.0_linux_amd64.tar.gz
     sha256 = if pkgs.stdenv.isDarwin then
-      if pkgs.stdenv.isAarch64 then "sha256-ESaGjD+TmhSqlld9Vlj1/vHhU58zJzC/NaBudBYsnmE="
-      else "sha256-WOWRiO3clCxfOVxwnvWrflU1jHnvFWudbChQZtzg8oU="
-    else if pkgs.stdenv.isAarch64 then "sha256-G/6YBUVkFQFIj+2Txm/HZnHHKkYFKF9XRXLaxwDv3TU="
-    else "sha256-ypi6VuKczTcT/nv4Nf3KAK4bl83LewvF45Pn7bQInIQ=";
+      if pkgs.stdenv.isAarch64 then "sha256-fG9lD3UWMj3dAD5Kur+Zj8HSxzCJpGYrjHm/gKxL31Y="
+      else "sha256-FciHmNJcsuGHDK+l3yMmAfOgVHKhNMqMOWvpB/KyNfY="
+    else if pkgs.stdenv.isAarch64 then "sha256-HorxoDwpmFWk6Wi3L6q+/vIw967jfSvzZq6S8uGSktQ="
+    else "sha256-of4lxHzDKXxmldYcGws6u36IY0sR6G13vA2TA3cofj0=";
 
     src = pkgs.fetchurl {
       url = "https://github.com/steipete/gogcli/releases/download/v${version}/${archFile}";

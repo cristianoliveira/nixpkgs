@@ -1,7 +1,7 @@
 # putio-cli - Agent-first CLI for put.io API
 pkgs: {
   putio-cli = let
-    version = "1.0.7";
+    version = "1.0.10";
     pnpmHook = if pkgs ? pnpmConfigHook then pkgs.pnpmConfigHook else pkgs.pnpm.configHook;
     fetchPnpmDeps = if pkgs ? fetchPnpmDeps then pkgs.fetchPnpmDeps else pkgs.pnpm.fetchDeps;
   in pkgs.stdenv.mkDerivation rec {
@@ -12,13 +12,13 @@ pkgs: {
       owner = "putdotio";
       repo = "putio-cli";
       rev = "v${version}";
-      hash = "sha256-6GfGlpXJaKZTk2oisN0pcowlo0HS3UQPbs+BQf8nPJY=";
+      hash = "sha256-8H8DvXM4h37bPkhHARxxwTDZ+LhboF//crKuR5IUwr4=";
     };
 
     pnpmDeps = fetchPnpmDeps {
       pname = "putio-cli";
       inherit src;
-      hash = "sha256-ZN6/0FtBvdvUsEnEiok0eDtlxhFOweuXE8ZcdvckpL4=";
+      hash = "sha256-f9rP46GisZRKzYiUTb2vo6stcXLOO2IOkRhtvjXzcMI=";
       fetcherVersion = 1;
     };
 

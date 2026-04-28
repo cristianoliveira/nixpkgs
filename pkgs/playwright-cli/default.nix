@@ -1,18 +1,18 @@
 # Playwright CLI for browser automation
 pkgs: {
   playwright-cli = let
-    version = "0.1.1";
+    version = "0.1.9";
     src = pkgs.fetchFromGitHub {
       owner = "microsoft";
       repo = "playwright-cli";
       rev = "v${version}";
-      sha256 = "sha256-Ao3phIPinliFDK04u/V3ouuOfwMDVf/qBUpQPESziFQ=";
+      sha256 = "sha256-w1mPi1CxmOsQAo6ruQAb7s+omrdG+Pnn0jZd7mt0yQA=";
     };
   in pkgs.buildNpmPackage {
     pname = "playwright-cli";
     inherit version src;
 
-    npmDepsHash = "sha256-4x3ozVrST6LtLoHl9KtmaOKrkYwCK84fwEREaoNaESc=";
+    npmDepsHash = "sha256-garaR0SHwpMBedIWb4CSBP5ZCfmm1eetufFyjQaipEE=";
     dontNpmBuild = true;
 
     passthru = {

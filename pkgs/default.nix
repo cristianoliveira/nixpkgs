@@ -22,6 +22,8 @@ pkgs:
   inherit (import ./zclaw pkgs) zclaw;
   inherit (import ./opensubtitles pkgs) opensubtitles;
   inherit (import ./teamcity-cli pkgs) teamcity-cli;
-  inherit (import ./aerospace pkgs) aerospace;
   inherit (import ./deltoids pkgs) deltoids;
+}
+// pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
+  inherit (import ./aerospace pkgs) aerospace;
 }

@@ -15,6 +15,7 @@
 
     aerospace-scratchpad.url = "github:cristianoliveira/aerospace-scratchpad";
     aerospace-marks.url = "github:cristianoliveira/aerospace-marks";
+    handy.url = "github:cjpais/Handy";
   };
 
   outputs =
@@ -27,6 +28,7 @@
     , aerospace-marks
     , mcpli
     , mcplifork
+    , handy
     , self
     , ...
     }:
@@ -49,6 +51,7 @@
           aerospace-marks = aerospaceMarks.default;
           mcpli = mcpli.packages.${system}.default;
           mcpliFork = mcplifork.packages.${system}.default;
+          handy = handy.packages.${system}.handy;
         };
       overlay = final: prev: {
         co = mkExternalPackages prev prev.system // import (self + /pkgs) prev;

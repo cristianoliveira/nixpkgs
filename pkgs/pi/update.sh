@@ -67,14 +67,15 @@ r'(?m)^(\s*version = ")[^"]+(";)$',
 if version_count != 1:
     raise SystemExit("error: failed to update version in default.nix")
 
-sha256_block = f'''    sha256 = if pkgs.stdenv.isDarwin then
-      if pkgs.stdenv.isAarch64 then "{darwin_arm64}"
-      else "{darwin_x64}"
-    else if pkgs.stdenv.isAarch64 then "{linux_arm64}"
-    else "{linux_x64}";'''
+sha256_block = f'''      sha256 =
+        if pkgs.stdenv.isDarwin then
+          if pkgs.stdenv.isAarch64 then "{darwin_arm64}"
+          else "{darwin_x64}"
+        else if pkgs.stdenv.isAarch64 then "{linux_arm64}"
+        else "{linux_x64}";'''
 
 content, sha_count = re.subn(
-    r'(?s)    sha256 = if pkgs\.stdenv\.isDarwin then\n      if pkgs\.stdenv\.isAarch64 then ".*?"\n      else ".*?"\n    else if pkgs\.stdenv\.isAarch64 then ".*?"\n    else ".*?";',
+    r'(?s)      sha256 =\n        if pkgs\.stdenv\.isDarwin then\n          if pkgs\.stdenv\.isAarch64 then ".*?"\n          else ".*?"\n        else if pkgs\.stdenv\.isAarch64 then ".*?"\n        else ".*?";',
     sha256_block,
     content,
     count=1,

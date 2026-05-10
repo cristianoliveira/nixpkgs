@@ -23,6 +23,7 @@ pkgs:
   inherit (import ./opensubtitles pkgs) opensubtitles;
   inherit (import ./teamcity-cli pkgs) teamcity-cli;
   inherit (import ./deltoids pkgs) deltoids;
+  inherit (import ./surf-cli pkgs) surf-cli;
 }
 // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
   inherit (import ./aerospace pkgs) aerospace;

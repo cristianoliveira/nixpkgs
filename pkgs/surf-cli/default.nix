@@ -8,12 +8,20 @@ pkgs: {
       rev = "v${version}";
       sha256 = "sha256-Ktyg7kfw2CV4EBbxkxtqlClp9fZq2G6CCIrAE4sWXEU=";
     };
+    dist = pkgs.fetchurl {
+      url = "https://registry.npmjs.org/surf-cli/-/surf-cli-${version}.tgz";
+      hash = "sha256-NGChJiVV2XGe+9jnTqYXJbhxDY9XfxoSubPxbsP+vjE=";
+    };
   in pkgs.buildNpmPackage {
     pname = "surf-cli";
     inherit version src;
 
     npmDepsHash = "sha256-lmSqdviehbyQgHKcbl6/pgP5l/DrxqQly8ek3QO+9RA=";
     dontNpmBuild = true;
+
+    postUnpack = ''
+      tar -xzf ${dist} --strip-components=1 -C $sourceRoot package/dist
+    '';
 
     meta = with pkgs.lib; {
       description = "CLI for AI agents to control Chrome. Zero config, agent-agnostic, battle-tested.";

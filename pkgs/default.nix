@@ -25,6 +25,7 @@ pkgs:
   inherit (import ./deltoids pkgs) deltoids;
   inherit (import ./surf-cli pkgs) surf-cli;
 }
-// pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
+  // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
   inherit (import ./aerospace pkgs) aerospace;
+  inherit (import ./cornerfix pkgs) cornerfix;
 }

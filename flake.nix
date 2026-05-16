@@ -41,6 +41,7 @@
           ergoPkgs = import ergo { inherit pkgs; };
           aerospaceScratchpad = import aerospace-scratchpad { inherit pkgs; };
           aerospaceMarks = import aerospace-marks { inherit pkgs; };
+          handyPackages = handy.packages.${system} or { };
         in
         {
           sway-setter = swaysetterPkgs.default;
@@ -51,7 +52,9 @@
           aerospace-marks = aerospaceMarks.default;
           mcpli = mcpli.packages.${system}.default;
           mcpliFork = mcplifork.packages.${system}.default;
-          handy = handy.packages.${system}.handy;
+        }
+        // pkgs.lib.optionalAttrs (handyPackages ? handy) {
+          handy = handyPackages.handy;
         };
       overlay = final: prev: {
         co = mkExternalPackages prev prev.system // import (self + /pkgs) prev;

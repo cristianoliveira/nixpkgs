@@ -1,7 +1,7 @@
 { pkgs ? import <nixpkgs> { }, ... }: {
   pi =
     let
-      version = "0.73.0";
+      version = "0.75.3";
 
       # Determine the architecture-specific file
       archFile =
@@ -12,19 +12,19 @@
         else "pi-linux-x64.tar.gz";
 
       # Update sha256 as needed - use empty string "" and nix will tell you the correct one
-      # nix-prefetch-url https://github.com/badlogic/pi-mono/releases/download/v${version}/pi-darwin-arm64.tar.gz
-      # nix-prefetch-url https://github.com/badlogic/pi-mono/releases/download/v${version}/pi-darwin-x64.tar.gz
-      # nix-prefetch-url https://github.com/badlogic/pi-mono/releases/download/v${version}/pi-linux-arm64.tar.gz
-      # nix-prefetch-url https://github.com/badlogic/pi-mono/releases/download/v${version}/pi-linux-x64.tar.gz
+      # nix-prefetch-url https://github.com/earendil-works/pi/releases/download/v${version}/pi-darwin-arm64.tar.gz
+      # nix-prefetch-url https://github.com/earendil-works/pi/releases/download/v${version}/pi-darwin-x64.tar.gz
+      # nix-prefetch-url https://github.com/earendil-works/pi/releases/download/v${version}/pi-linux-arm64.tar.gz
+      # nix-prefetch-url https://github.com/earendil-works/pi/releases/download/v${version}/pi-linux-x64.tar.gz
       sha256 =
         if pkgs.stdenv.isDarwin then
-          if pkgs.stdenv.isAarch64 then "sha256-GwzD+T3Ov1a65tNITAVxGE7lMlT8QdpRsWCud3gNLTA="
-          else "sha256-sJqme4uNjFCJnjB7yUE+19IUdP7nLmDPn3+ldlWZ+38="
-        else if pkgs.stdenv.isAarch64 then "sha256-ZtByN8xo4l9THwr6h0lVLdoD4r6vR6SQvZEBh0YDuHs="
-        else "sha256-Xul6xqpe1yWN7MQWr967771b+eLNXIFBl71L8eTyX58=";
+          if pkgs.stdenv.isAarch64 then "sha256-LRZmjWJoBepz1DCxeLIvU0EVLHwTVExG+J1oBY4Lv4E="
+          else "sha256-JDLPC2qYTT+20Cm1/WUIYqQszpIbJb1bbRfOmvzD5po="
+        else if pkgs.stdenv.isAarch64 then "sha256-NBOJtZrUpUomgRTE4rTmXgFPl6WB/RTqciwgsziX7s0="
+        else "sha256-hu9I21upinhKzx284b1tX9W2vuPuLvRJ4IEagtG6eMM=";
 
       src = pkgs.fetchurl {
-        url = "https://github.com/badlogic/pi-mono/releases/download/v${version}/${archFile}";
+        url = "https://github.com/earendil-works/pi/releases/download/v${version}/${archFile}";
         inherit sha256;
       };
     in
@@ -60,7 +60,7 @@
 
       meta = with pkgs.lib; {
         description = "Pi AI coding assistant";
-        homepage = "https://github.com/badlogic/pi-mono";
+        homepage = "https://github.com/earendil-works/pi";
         license = licenses.mit;
         platforms = platforms.unix;
         maintainers = [ ];

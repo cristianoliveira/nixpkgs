@@ -56,9 +56,26 @@
         // pkgs.lib.optionalAttrs (handyPackages ? handy) {
           handy = handyPackages.handy;
         };
-      overlay = final: prev: {
-        co = mkExternalPackages prev prev.system // import (self + /pkgs) prev;
-      };
+      overlay = final: prev:
+        let
+          buildWasmGrammar = prev.callPackage ./pkgs/tree-sitter-wasm-grammars/build-wasm-grammar.nix { };
+          nvimTreesitterGenerated = import (prev.path + /pkgs/applications/editors/vim/plugins/nvim-treesitter/generated.nix);
+          nvimTreesitterArgs = builtins.intersectAttrs (builtins.functionArgs nvimTreesitterGenerated) prev // {
+            buildGrammar = buildWasmGrammar;
+            buildQueries = _: null;
+          };
+          builtWasmGrammars = (nvimTreesitterGenerated nvimTreesitterArgs).parsers;
+          treeSitterWithWasmGrammars = prev.tree-sitter.overrideAttrs (oldAttrs: {
+            passthru = (oldAttrs.passthru or { }) // {
+              inherit buildWasmGrammar builtWasmGrammars;
+
+            };
+          });
+        in
+        {
+          tree-sitter = treeSitterWithWasmGrammars;
+          co = mkExternalPackages prev prev.system // import (self + /pkgs) prev;
+        };
       perSystem = utils.lib.eachDefaultSystem (system:
         let
           pkgs = import nixpkgs { inherit system; };

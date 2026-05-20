@@ -82,13 +82,60 @@ Then load from your public assets path:
 const Python = await Parser.Language.load("/assets/python.wasm");
 ```
 
-## Build one grammar directly
+## Build and use without installing
+
+Build one grammar from this flake without adding it to a profile or system config:
 
 ```sh
-nix build '.#legacyPackages.x86_64-linux.tree-sitter.passthru.builtWasmGrammars.python'
+nix build --impure --expr '
+let
+  f = builtins.getFlake "github:cristianoliveira/nixpkgs";
+  pkgs = f.lib.withOverlays builtins.currentSystem [];
+in
+  pkgs.tree-sitter.passthru.builtWasmGrammars.python
+'
 ```
 
-Or via this flake overlay in Nix code:
+The result symlink contains the `.wasm` file:
+
+```sh
+ls ./result
+# python.wasm
+```
+
+Use it directly from JavaScript:
+
+```js
+const Python = await Parser.Language.load("./result/python.wasm");
+```
+
+Build multiple grammars into one result folder:
+
+```sh
+nix build --impure --expr '
+let
+  f = builtins.getFlake "github:cristianoliveira/nixpkgs";
+  pkgs = f.lib.withOverlays builtins.currentSystem [];
+  grammars = pkgs.tree-sitter.passthru.builtWasmGrammars;
+in
+  pkgs.runCommand "tree-sitter-wasm-grammars" { } '\''
+    mkdir -p $out
+    cp ${grammars.javascript}/javascript.wasm $out/
+    cp ${grammars.python}/python.wasm $out/
+    cp ${grammars.go}/go.wasm $out/
+    cp ${grammars.rust}/rust.wasm $out/
+  '\''
+'
+```
+
+Then:
+
+```sh
+ls ./result
+# go.wasm javascript.wasm python.wasm rust.wasm
+```
+
+Or use a grammar via this flake overlay in Nix code:
 
 ```nix
 pkgs.tree-sitter.passthru.builtWasmGrammars.python

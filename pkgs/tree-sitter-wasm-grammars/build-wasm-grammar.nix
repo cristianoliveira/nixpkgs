@@ -1,19 +1,18 @@
-{
-  stdenv,
-  tree-sitter,
-  emscripten,
-  jq,
-  lib,
+{ stdenv
+, tree-sitter
+, emscripten
+, jq
+, lib
+,
 }:
 
-{
-  language,
-  version,
-  src,
-  meta ? { },
-  generate ? false,
-  excludeBrokenTreeSitterJson ? false,
-  ...
+{ language
+, version
+, src
+, meta ? { }
+, generate ? false
+, excludeBrokenTreeSitterJson ? false
+, ...
 }@args:
 
 stdenv.mkDerivation (
@@ -86,7 +85,7 @@ stdenv.mkDerivation (
   // (lib.optionalAttrs (args ? location && args.location != null) {
     setSourceRoot = "sourceRoot=$(echo */${args.location})";
   })
-  // removeAttrs args [
+    // removeAttrs args [
     "generate"
     "excludeBrokenTreeSitterJson"
     "meta"

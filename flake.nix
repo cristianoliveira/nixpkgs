@@ -66,7 +66,8 @@
           } // prev.lib.optionalAttrs (nvimTreesitterFunctionArgs ? buildQueries) {
             buildQueries = _: null;
           };
-          builtWasmGrammars = (nvimTreesitterGenerated nvimTreesitterArgs).parsers;
+          nvimTreesitterGeneratedResult = nvimTreesitterGenerated nvimTreesitterArgs;
+          builtWasmGrammars = nvimTreesitterGeneratedResult.parsers or nvimTreesitterGeneratedResult;
           treeSitterWithWasmGrammars = prev.tree-sitter.overrideAttrs (oldAttrs: {
             passthru = (oldAttrs.passthru or { }) // {
               inherit buildWasmGrammar builtWasmGrammars;

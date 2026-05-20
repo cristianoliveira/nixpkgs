@@ -60,8 +60,10 @@
         let
           buildWasmGrammar = prev.callPackage ./pkgs/tree-sitter-wasm-grammars/build-wasm-grammar.nix { };
           nvimTreesitterGenerated = import (prev.path + /pkgs/applications/editors/vim/plugins/nvim-treesitter/generated.nix);
-          nvimTreesitterArgs = builtins.intersectAttrs (builtins.functionArgs nvimTreesitterGenerated) prev // {
+          nvimTreesitterFunctionArgs = builtins.functionArgs nvimTreesitterGenerated;
+          nvimTreesitterArgs = builtins.intersectAttrs nvimTreesitterFunctionArgs prev // {
             buildGrammar = buildWasmGrammar;
+          } // prev.lib.optionalAttrs (nvimTreesitterFunctionArgs ? buildQueries) {
             buildQueries = _: null;
           };
           builtWasmGrammars = (nvimTreesitterGenerated nvimTreesitterArgs).parsers;

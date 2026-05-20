@@ -69,6 +69,11 @@
             passthru = (oldAttrs.passthru or { }) // {
               inherit buildWasmGrammar builtWasmGrammars;
 
+              tests = (oldAttrs.passthru.tests or { }) // {
+                tree-sitter-wasm-grammar-python = builtWasmGrammars.python;
+                tree-sitter-wasm-grammar-apex = builtWasmGrammars.apex;
+                tree-sitter-wasm-grammar-cpp = builtWasmGrammars.cpp;
+              };
             };
           });
         in

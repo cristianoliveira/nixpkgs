@@ -61,8 +61,18 @@ stdenv.mkDerivation (
 
     buildPhase = ''
       runHook preBuild
-      export EM_CACHE=$TMPDIR/emcache
+      export EM_CACHE=$(mktemp -d)
+      export HOME=$(mktemp -d)
       mkdir -p "$EM_CACHE"
+
+      # Some Emscripten versions copy read-only files from the Nix store into
+      # EM_CACHE, then try to update the same cache during the real grammar
+      # build. Pre-warm the cache and make it writable before invoking the
+      # tree-sitter CLI.
+      echo 'int main() { return 0; }' > emcache-warmup.c
+      emcc emcache-warmup.c -o emcache-warmup.js || true
+      chmod -R u+rwX "$EM_CACHE"
+
       tree-sitter build --wasm -o ${language}.wasm
       runHook postBuild
     '';

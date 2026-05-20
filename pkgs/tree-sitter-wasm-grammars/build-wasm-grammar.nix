@@ -61,8 +61,8 @@ stdenv.mkDerivation (
 
     buildPhase = ''
       runHook preBuild
-      mkdir -p .emcache
-      export EM_CACHE=$(pwd)/.emcache
+      export EM_CACHE=$TMPDIR/emcache
+      mkdir -p "$EM_CACHE"
       tree-sitter build --wasm -o ${language}.wasm
       runHook postBuild
     '';

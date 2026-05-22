@@ -65,13 +65,15 @@ stdenv.mkDerivation (
       export HOME=$(mktemp -d)
       mkdir -p "$EM_CACHE"
 
-      # Some Emscripten versions copy read-only files from the Nix store into
-      # EM_CACHE, then try to update the same cache during the real grammar
-      # build. Pre-warm the cache and make it writable before invoking the
-      # tree-sitter CLI.
+      # Emscripten copies read-only files from the Nix store into its cache
+      # and sysroot, then tries to overwrite them on subsequent builds.
+      # Pre-warm the cache, then make everything writable – including any
+      # sysroot directories that emscripten may have created outside EM_CACHE
+      # (e.g. under /build/tmp.*) – before invoking the tree-sitter CLI.
       echo 'int main() { return 0; }' > emcache-warmup.c
       emcc emcache-warmup.c -o emcache-warmup.js || true
       chmod -R u+rwX "$EM_CACHE"
+      find /build -maxdepth 3 -type d -name sysroot -exec chmod -R u+rwX {} + 2>/dev/null || true
 
       tree-sitter build --wasm -o ${language}.wasm
       runHook postBuild

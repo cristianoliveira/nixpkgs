@@ -24,6 +24,7 @@ pkgs:
   inherit (import ./teamcity-cli pkgs) teamcity-cli;
   inherit (import ./deltoids pkgs) deltoids;
   inherit (import ./surf-cli pkgs) surf-cli;
+  inherit (import ./sonarqube-cli pkgs) sonarqube-cli;
 }
   // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
   inherit (import ./aerospace pkgs) aerospace;

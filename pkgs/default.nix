@@ -25,6 +25,7 @@ pkgs:
   inherit (import ./deltoids pkgs) deltoids;
   inherit (import ./surf-cli pkgs) surf-cli;
   inherit (import ./sonarqube-cli pkgs) sonarqube-cli;
+  inherit (import ./huggingface-hub pkgs) huggingface-hub;
 }
   // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
   inherit (import ./aerospace pkgs) aerospace;

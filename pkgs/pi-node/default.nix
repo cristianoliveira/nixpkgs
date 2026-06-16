@@ -4,7 +4,7 @@
       version = "0.79.4";
     in
     pkgs.buildNpmPackage rec {
-      pname = "pi-node";
+      pname = "pi";
       inherit version;
 
       src = pkgs.fetchFromGitHub {

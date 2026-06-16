@@ -17,6 +17,7 @@ pkgs:
   inherit (import ./goplaces pkgs) goplaces;
   inherit (import ./funzzy pkgs) funzzy funzzyNightly;
   inherit (import ./pi pkgs) pi;
+  inherit (import ./pi-node pkgs) pi-node;
   inherit (import ./playwright-cli pkgs) playwright-cli;
   inherit (import ./zeroclaw pkgs) zeroclaw;
   inherit (import ./zclaw pkgs) zclaw;

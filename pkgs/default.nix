@@ -17,7 +17,6 @@ pkgs:
   inherit (import ./goplaces pkgs) goplaces;
   inherit (import ./funzzy pkgs) funzzy funzzyNightly;
   inherit (import ./pi pkgs) pi;
-  inherit (import ./pi-node pkgs) pi-node;
   inherit (import ./playwright-cli pkgs) playwright-cli;
   inherit (import ./zeroclaw pkgs) zeroclaw;
   inherit (import ./zclaw pkgs) zclaw;
@@ -27,6 +26,9 @@ pkgs:
   inherit (import ./surf-cli pkgs) surf-cli;
   inherit (import ./sonarqube-cli pkgs) sonarqube-cli;
   inherit (import ./huggingface-hub pkgs) huggingface-hub;
+}
+// pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+  inherit (import ./pi-node pkgs) pi-node;
 }
   // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
   inherit (import ./aerospace pkgs) aerospace;

@@ -54,7 +54,10 @@ pkgs: {
         hash = "sha256-ZbpZaAoUsHPPbBAOOLYvEJDy06WO0uDYnRF1+gEzB0Q=";
       };
 
-      cargoHash = "sha256-m7qlL+ajw/rwIHQ7KAw7gI9QmpTBnxWEeTVRgrBOcl4=";
+      # Use importCargoLock instead of cargoHash/fetchCargoVendor.
+      # fetchCargoVendor downloads many crates concurrently with Python requests and
+      # is currently rejected by crates.io with HTTP 403 in GitHub Actions.
+      cargoLock.lockFile = ./Cargo-nightly.lock;
 
       buildInputs = pkgs.lib.optionals pkgs.stdenv.isDarwin [
         pkgs.libiconv

@@ -1,7 +1,7 @@
 { pkgs ? import <nixpkgs> { }, ... }: {
   pi-node =
     let
-      version = "0.80.3";
+      version = "0.80.6";
     in
     pkgs.buildNpmPackage rec {
       pname = "pi";
@@ -11,10 +11,10 @@
         owner = "earendil-works";
         repo = "pi";
         rev = "v${version}";
-        hash = "sha256-wQTrWKsb2HCGwzSAFEk8NWSDpqxSY/lv1/R6ghcmbaA=";
+        hash = "sha256-e/wcHruEcBAHDF5tKvwew7LXjVp0eraHh2k+QaL2sCA=";
       };
 
-      npmDepsHash = "sha256-geh8LH88OZybFXkR/jDeTdew6TNMdFM6jhCSYKn//dU=";
+      npmDepsHash = "sha256-xXEOR0epZcfbXayYGyJdBiFVliamBexqA+1Sd7wlGhU=";
       npmBuildScript = "build";
 
       nativeBuildInputs = [

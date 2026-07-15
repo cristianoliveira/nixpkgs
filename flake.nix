@@ -39,8 +39,16 @@
           # Use local derivation for funzzy to avoid upstream nixpkgs compatibility churn.
           funzzyPkg = (import (self + /pkgs/funzzy) pkgs).funzzy;
           ergoPkgs = import ergo { inherit pkgs; };
-          aerospaceScratchpad = import aerospace-scratchpad { inherit pkgs; };
-          aerospaceMarks = import aerospace-marks { inherit pkgs; };
+          # Both AeroSpace CLIs require Go 1.26, but their buildGoModule calls
+          # otherwise select nixpkgs' default Go compiler.
+          withGo126 = package:
+            package.overrideAttrs (old: {
+              preBuild = (old.preBuild or "") + ''
+                export PATH=${pkgs.go_1_26}/bin:$PATH
+              '';
+            });
+          aerospaceScratchpad = withGo126 (import aerospace-scratchpad { inherit pkgs; }).default;
+          aerospaceMarks = withGo126 (import aerospace-marks { inherit pkgs; }).default;
           handyPackages = handy.packages.${system} or { };
         in
         {
@@ -48,8 +56,8 @@
           funzzy = funzzyPkg;
           fzz = funzzyPkg;
           ergoProxy = ergoPkgs.default;
-          aerospace-scratchpad = aerospaceScratchpad.default;
-          aerospace-marks = aerospaceMarks.default;
+          aerospace-scratchpad = aerospaceScratchpad;
+          aerospace-marks = aerospaceMarks;
           mcpli = mcpli.packages.${system}.default;
           mcpliFork = mcplifork.packages.${system}.default;
         }

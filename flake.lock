@@ -6,11 +6,11 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1784103768,
-        "narHash": "sha256-YyG6spacYS5la2qp4nnTcnJunGgjmScFE8bNp4YcpQc=",
+        "lastModified": 1784105206,
+        "narHash": "sha256-QD0rVxqKN17XFUY4vJkYgkONqdbLykOBRPi7CeS1V6k=",
         "owner": "cristianoliveira",
         "repo": "aerospace-marks",
-        "rev": "f99ed0915a093494d52ddd860c96bf469367f500",
+        "rev": "9fc54a16a3ae39ddd7f44bba35f21f37ee3e0404",
         "type": "github"
       },
       "original": {

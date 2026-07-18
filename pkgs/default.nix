@@ -22,6 +22,7 @@ pkgs:
   inherit (import ./opensubtitles pkgs) opensubtitles;
   inherit (import ./teamcity-cli pkgs) teamcity-cli;
   inherit (import ./deltoids pkgs) deltoids;
+  inherit (import ./etoro-cli pkgs) etoro-cli;
   inherit (import ./surf-cli pkgs) surf-cli;
   inherit (import ./sonarqube-cli pkgs) sonarqube-cli;
   inherit (import ./huggingface-hub pkgs) huggingface-hub;

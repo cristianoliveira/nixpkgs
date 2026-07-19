@@ -27,6 +27,7 @@ pkgs:
   inherit (import ./sonarqube-cli pkgs) sonarqube-cli;
   inherit (import ./huggingface-hub pkgs) huggingface-hub;
   inherit (import ./websearch pkgs) websearch;
+  inherit (import ./toon pkgs) toon;
 }
 // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
   inherit (import ./pi-node pkgs) pi-node;

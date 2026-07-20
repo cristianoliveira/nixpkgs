@@ -1,20 +1,19 @@
 # Multi-provider web search and content extraction CLI
 pkgs: {
   websearch = let
-    version = "2.1.0";
+    version = "3.0.0";
     src = pkgs.fetchFromGitHub {
       owner = "cristianoliveira";
       repo = "websearch";
-      rev = "fa1dd63fbaf4e4b58f8b3b8bab54b36094901772";
-      # Update sha256 as needed - use empty string "" and nix will tell you the correct one
+      rev = "0fce90212cb26ab61422fc0c6761e7e779aa9512";
       # nix-prefetch-url https://github.com/cristianoliveira/websearch/archive/<rev>.tar.gz
-      sha256 = "sha256-6XmGg+lwWPYeFS5kbW5b1i9FojgocxNY2dpZwGA2tYM=";
+      sha256 = "sha256-OVUkGAe5egrjmz5CRnhIJOQHMUYuiNGBTFW9C/6eaVk=";
     };
   in pkgs.buildNpmPackage {
     pname = "websearch";
     inherit version src;
 
-    npmDepsHash = "sha256-RUwzPhCQ1Y4QHvigxQ1t5n5hHHWhjB0lFIH2MoZWTxw=";
+    npmDepsHash = "sha256-wabg8wpCQExsV4u6LPEbgO/uq+w3AbXXnfH7U5n87UY=";
 
     nativeBuildInputs = [ pkgs.makeWrapper ];
 

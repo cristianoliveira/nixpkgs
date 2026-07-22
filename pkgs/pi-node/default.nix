@@ -1,7 +1,7 @@
 { pkgs ? import <nixpkgs> { }, ... }: {
   pi-node =
     let
-      version = "0.80.10";
+      version = "0.81.1";
     in
     pkgs.buildNpmPackage rec {
       pname = "pi";
@@ -11,11 +11,12 @@
         owner = "earendil-works";
         repo = "pi";
         rev = "v${version}";
-        hash = "sha256-Vs/ndHYzFyfN4CjPV2zMYblLXe9IuM13UrPJI1VsZEQ=";
+        hash = "sha256-xo3uoR7HceOCL3wqoMcacOe8WXP1o7ReAXne5t6Hgao=";
       };
 
-      npmDepsHash = "sha256-XGvDNH+eilsgc0Z7ITqbitB/9RVc+WuDfCcr1pibNqk=";
-      npmBuildScript = "build";
+      npmDepsHash = "sha256-lzKQZbnITzgV9koucsMno6f61ubBLYUcwQEXtak1r1s=";
+      # Upstream ships a network-free build that uses checked-in model data.
+      npmBuildScript = "build:offline";
 
       nativeBuildInputs = [
         pkgs.makeWrapper
@@ -33,15 +34,6 @@
         pkgs.pango
         pkgs.pixman
       ];
-
-      postPatch = ''
-        # The model generators fetch live provider catalogs, which is not
-        # allowed in Nix builds and can produce incomplete generated files
-        # offline. Use the generated catalogs checked into the release tag.
-        substituteInPlace packages/ai/package.json \
-          --replace-fail '"build": "npm run generate-models && npm run generate-image-models && tsgo -p tsconfig.build.json"' \
-                         '"build": "tsgo -p tsconfig.build.json"'
-      '';
 
       installPhase = ''
         runHook preInstall

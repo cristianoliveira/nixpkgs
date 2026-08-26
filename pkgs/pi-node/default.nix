@@ -1,52 +1,17 @@
 { pkgs ? import <nixpkgs> { }, ... }: {
   pi-node =
     let
-      version = "0.84.2";
+      version = "0.84.3";
 
-      # Upstream no longer ships checked-in model data (packages/ai/src/providers/data
-      # is gitignored). The build hydrates it from four public APIs, so we pin their
-      # responses via fixed-output derivations and patch generate-models.ts to read
-      # them from PI_PINNED_MODEL_DATA_DIR instead of the network.
-      modelsDevApi = pkgs.fetchurl {
-        url = "https://models.dev/api.json";
-        hash = "sha256-uCj4RT6egkDir4mTqPc4GMzx9pG3GF2xuLDS1+GQw+o=";
+      # Upstream does not check in packages/ai/src/providers/data (gitignored) and
+      # build:offline fails without it. The npm tarball of @earendil-works/pi-ai is
+      # immutable and ships the exact dist/providers/data upstream built this
+      # release with, so we copy it in instead of regenerating from live APIs.
+      # Bump this hash together with version.
+      modelDataTarball = pkgs.fetchurl {
+        url = "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-${version}.tgz";
+        hash = "sha256-nECvL0OVD46U57vNDBs1SPAAly2gDE+5wNBSnU19VDE=";
       };
-      openrouterModels = pkgs.fetchurl {
-        url = "https://openrouter.ai/api/v1/models";
-        hash = "sha256-G1MbRwXC43ab0qB+OhEo5H0+sErYBYUOK+jOs1Qbf8I=";
-      };
-      aiGatewayModels = pkgs.fetchurl {
-        url = "https://ai-gateway.vercel.sh/v1/models";
-        hash = "sha256-E1k4tX1PnMRk4OWrdbQfIc4lUdklJOnolQJACWIMm4Y=";
-      };
-      nvidiaNimModels = pkgs.fetchurl {
-        url = "https://integrate.api.nvidia.com/v1/models";
-        hash = "sha256-StvuIXsr0csNl4RgAaRZqEXs3lqUX1OR92npA5ITlxQ=";
-      };
-
-      # File names match generate-models.ts: url.replace(/[^a-zA-Z0-9]+/g, "_") + ".json"
-      pinnedModelData = pkgs.runCommand "pi-pinned-model-data" { } ''
-        mkdir -p $out
-        ln -s ${modelsDevApi} $out/https_models_dev_api_json.json
-        ln -s ${openrouterModels} $out/https_openrouter_ai_api_v1_models.json
-        ln -s ${aiGatewayModels} $out/https_ai_gateway_vercel_sh_v1_models.json
-        ln -s ${nvidiaNimModels} $out/https_integrate_api_nvidia_com_v1_models.json
-      '';
-
-      # Plain JS on purpose: node type-strips this file, no template literals so the
-      # nix string needs no escaping.
-      pinnedFetchHelper = pkgs.writeText "pinned-fetch-helper.ts" ''
-        function pinnedFetch(url) {
-        	const dir = process.env.PI_PINNED_MODEL_DATA_DIR;
-        	if (dir) {
-        		const key = url.replace(/[^a-zA-Z0-9]+/g, "_");
-        		const content = readFileSync(dir + "/" + key + ".json", "utf8");
-        		return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(JSON.parse(content)) });
-        	}
-        	return fetch(url);
-        }
-
-      '';
     in
     pkgs.buildNpmPackage rec {
       pname = "pi";
@@ -56,29 +21,14 @@
         owner = "earendil-works";
         repo = "pi";
         rev = "v${version}";
-        hash = "sha256-d29ft9otYxdHRWYIAX8KMHPpppToX9ME5LbPb1rPcYo=";
+        hash = "sha256-fC9pKgP2qD61ae5d7iOqP8anl88J1N1Bq8X8+aAjA2A=";
       };
 
-      npmDepsHash = "sha256-6J5Efe+6ptCuR3VZojwYPZO8BBnnZsOQ4OAeB64uYOY=";
-      # Network-free build: model data is hydrated from PI_PINNED_MODEL_DATA_DIR in preBuild.
+      npmDepsHash = "sha256-cDx28+c4bwtQpiy5+BCvZhZezoZb4WRqfZj2eoEeMbw=";
       npmBuildScript = "build:offline";
 
-      postPatch = ''
-        # Insert helper after the shebang line; node strips types and needs line 1 intact.
-        sed -i -e "1r ${pinnedFetchHelper}" packages/ai/scripts/generate-models.ts
-        substituteInPlace packages/ai/scripts/generate-models.ts \
-          --replace-fail 'await fetch(`''${NVIDIA_BASE_URL}/models`)' 'await pinnedFetch(`''${NVIDIA_BASE_URL}/models`)' \
-          --replace-fail 'await fetch("https://openrouter.ai/api/v1/models")' 'await pinnedFetch("https://openrouter.ai/api/v1/models")' \
-          --replace-fail 'await fetch(`''${AI_GATEWAY_MODELS_URL}/models`)' 'await pinnedFetch(`''${AI_GATEWAY_MODELS_URL}/models`)' \
-          --replace-fail 'await fetch("https://models.dev/api.json")' 'await pinnedFetch("https://models.dev/api.json")'
-      '';
-
-      preBuild = ''
-        export PI_PINNED_MODEL_DATA_DIR=${pinnedModelData}
-        npm run hydrate:model-data
-      '';
-
       nativeBuildInputs = [
+        pkgs.gnutar
         pkgs.makeWrapper
         pkgs.node-gyp
         pkgs.pkg-config
@@ -94,6 +44,12 @@
         pkgs.pango
         pkgs.pixman
       ];
+
+      postPatch = ''
+        # Restore the gitignored model data this release was built with upstream.
+        # check:model-data inside build:offline verifies the manifest hashes.
+        tar -xzf ${modelDataTarball} --strip-components=3 -C packages/ai/src/providers package/dist/providers/data
+      '';
 
       installPhase = ''
         runHook preInstall

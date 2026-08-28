@@ -2,7 +2,7 @@
 pkgs: {
   funzzy =
     let
-      version = "1.5.0";
+      version = "2.0.0";
     in
     pkgs.rustPlatform.buildRustPackage rec {
       pname = "funzzy";
@@ -12,10 +12,12 @@ pkgs: {
         owner = "cristianoliveira";
         repo = "funzzy";
         rev = "v${version}";
-        hash = "sha256-3EHZvgHlM3ldX6SEyqGf6MZIrDFOLXbKTZnJNczT570=";
+        hash = "sha256-i/HtqI8VzYW7Mz8QlH/KF3uuJ6NH2fBmZBgKEV1jH+A=";
       };
 
-      cargoHash = "sha256-n9UHyr7W4hrN0+2dsYAYqkP/uzBv74p5XHU0g2MReJY=";
+      # Use importCargoLock instead of cargoHash/fetchCargoVendor: crates.io
+      # rejects the concurrent vendor fetches used by fetchCargoVendor (HTTP 403).
+      cargoLock.lockFile = ./Cargo-2.0.0.lock;
 
       # When installing from source only run unit tests
       checkPhase = ''

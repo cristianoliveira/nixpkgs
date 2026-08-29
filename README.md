@@ -104,7 +104,14 @@ make ci-validate
 
 # List packages (dynamic discovery)
 make list-packages
+
+# Run local file tasks and watch GitHub CI for the current commit
+scripts/watch-all.sh
 ```
+
+`scripts/watch-all.sh` runs the local `fzz` watcher and the finite CI observer
+in parallel. A failed `nix ci` run stops the local watcher and returns failure.
+The observer waits for the matching GitHub Actions run after a push.
 
 ## CI/CD
 

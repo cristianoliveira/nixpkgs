@@ -4,50 +4,74 @@
 # list here all the events and the commands that it should execute
 
 # Conditional task
-- name: stage files to git
-  run_on_init: true
-  run: 
-    - git add {{relative_filepath}}
-    - git add -p
-  change: 
-    - '.fzz/on_success.evt'
-    - '*.nix'
-    - '.watch.yaml'
-    - 'Makefile'
-    - 'README.md'
+jobs:
+  - name: stage files to git
+    run_on_init: true
+    run:
+      - git add {{relative_filepath}}
+      - git add -p
+    change:
+      - '.fzz/on_success.evt'
+      - '*.nix'
+      - '.watch.yaml'
+      - 'Makefile'
+      - 'README.md'
 
-- name: check flake
-  run_on_init: true
-  run: 
-    - 'nix flake check --show-trace'
-    ## if fails touch file to trigger next task
-    - 'make build-all || touch hash-generate.tsk'
-  change: '*.nix'
+  - name: check flake
+    run_on_init: true
+    run:
+      - 'nix flake check --show-trace'
+      ## if fails touch file to trigger next task
+      - 'make build-all || touch hash-generate.tsk'
+    change: '*.nix'
 
-- name: regenerate generate hashes
-  run: 
-    - rm -rf *.log || echo nothing
-    - make build-ergo 2> ergo.log || nvim ergo.log
-    - make build-fzz 2> fzz.log || nvim fzz.log
-    - rm -rf *.log || echo nothing
-  change: 'hash-generate.tsk'
+  - name: regenerate generate hashes
+    run:
+      - rm -rf *.log || echo nothing
+      - make build-ergo 2> ergo.log || nvim ergo.log
+      - make build-fzz 2> fzz.log || nvim fzz.log
+      - rm -rf *.log || echo nothing
+    change: 'hash-generate.tsk'
 
-- name: check default
-  run: 'make check-default'
-  change: '*.nix'
+  - name: check default
+    run: 'make check-default'
+    change: '*.nix'
 
-# - name: All checks pass
-#   run: 'touch .fzz/on_success.evt'
-#   change:
-#     - '**/*'
-#   ignore:
-#     - '.fzz/**'
-#     - '.git/**'
+  # - name: All checks pass
+  #   run: 'touch .fzz/on_success.evt'
+  #   change:
+  #     - '**/*'
+  #   ignore:
+  #     - '.fzz/**'
+  #     - '.git/**'
 
-- name: rebase to git
-  run_on_init: true
-  run: 
-    - git fetch --all
-    - git rebase origin/main
-  change: 
-    - '.git/COMMIT_EDITMSG'
+  - name: rebase to git
+    run_on_init: true
+    run:
+      - git fetch --all
+      - git rebase origin/main
+    change:
+      - '.git/COMMIT_EDITMSG'
+
+  # Watch the GitHub Actions run for the current commit.
+  # Run manually after pushing: `fzz run @ci`.
+  - name: watch CI @ci
+    trigger: manual
+    run: |
+      set -euo pipefail
+      branch="$(git branch --show-current)"
+      sha="$(git rev-parse HEAD)"
+      run_id="$(gh run list \
+        --workflow on-push-nixbuild.yml \
+        --branch "$branch" \
+        --commit "$sha" \
+        --limit 1 \
+        --json databaseId \
+        --jq '.[0].databaseId // empty')"
+
+      if [ -z "$run_id" ]; then
+        echo "No nix CI run found for $branch@$sha" >&2
+        exit 1
+      fi
+
+      gh run watch "$run_id" --compact --exit-status

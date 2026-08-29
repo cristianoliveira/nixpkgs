@@ -53,25 +53,9 @@ jobs:
     change:
       - '.git/COMMIT_EDITMSG'
 
-  # Watch the GitHub Actions run for the current commit.
-  # Run manually after pushing: `fzz run @ci`.
+  # Finite remote observation. `scripts/watch-all.sh` runs this target
+  # alongside the local file watcher and propagates its failure.
   - name: watch CI @ci
     trigger: manual
-    run: |
-      set -euo pipefail
-      branch="$(git branch --show-current)"
-      sha="$(git rev-parse HEAD)"
-      run_id="$(gh run list \
-        --workflow on-push-nixbuild.yml \
-        --branch "$branch" \
-        --commit "$sha" \
-        --limit 1 \
-        --json databaseId \
-        --jq '.[0].databaseId // empty')"
-
-      if [ -z "$run_id" ]; then
-        echo "No nix CI run found for $branch@$sha" >&2
-        exit 1
-      fi
-
-      gh run watch "$run_id" --compact --exit-status
+    timeout: 30m
+    run: scripts/await-ci.sh

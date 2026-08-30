@@ -3,37 +3,49 @@ pkgs: {
   funzzy =
     let
       version = "2.0.0";
+
+      archFile =
+        if pkgs.stdenv.isDarwin then
+          if pkgs.stdenv.isAarch64 then "aarch64-darwin" else "x86_64-darwin"
+        else if pkgs.stdenv.isAarch64 then "aarch64-linux" else "x86_64-linux";
+
+      sha256 = {
+        "aarch64-darwin" = "sha256-owS+WZCzkRKBlhGnQRwIzr+c+UpCBiMjE/HUEavtNtE=";
+        "aarch64-linux" = "sha256-CyGL8FjvfFVYMs2p0cwe6EOaL4ACBqJZvEfuPl1ZXVM=";
+        "x86_64-darwin" = "sha256-fXQi50aQGREeLjzxtubXE4lTIAGckUbLCby1nf7Bl0w=";
+        "x86_64-linux" = "sha256-fXrfZp2PXjTVFbYnOEdrwtVdeELrCsYlLeZLmbFhCdg=";
+      }.${archFile};
     in
-    pkgs.rustPlatform.buildRustPackage rec {
+    pkgs.stdenv.mkDerivation {
       pname = "funzzy";
       inherit version;
 
-      src = pkgs.fetchFromGitHub {
-        owner = "cristianoliveira";
-        repo = "funzzy";
-        rev = "v${version}";
-        hash = "sha256-i/HtqI8VzYW7Mz8QlH/KF3uuJ6NH2fBmZBgKEV1jH+A=";
+      src = pkgs.fetchurl {
+        url = "https://github.com/cristianoliveira/funzzy/releases/download/v${version}/funzzy-v${version}-${archFile}.tar.gz";
+        inherit sha256;
       };
 
-      # Use importCargoLock instead of cargoHash/fetchCargoVendor: crates.io
-      # rejects the concurrent vendor fetches used by fetchCargoVendor (HTTP 403).
-      cargoLock.lockFile = ./Cargo-2.0.0.lock;
+      nativeBuildInputs = [ pkgs.gnutar pkgs.gzip ];
 
-      # When installing from source only run unit tests
-      checkPhase = ''
-        cargo test $UNIT_TEST --lib
+      sourceRoot = ".";
+      unpackPhase = ''
+        runHook preUnpack
+        tar xzf $src
+        runHook postUnpack
       '';
 
-      buildInputs = pkgs.lib.optionals pkgs.stdenv.isDarwin [
-        # nixpkgs removed legacy `darwin.apple_sdk_11_0` stubs.
-        # funzzy only needs iconv symbols on macOS.
-        pkgs.libiconv
-      ];
+      installPhase = ''
+        runHook preInstall
+        mkdir -p $out/bin
+        install -m755 pkg/funzzy $out/bin/funzzy
+        install -m755 pkg/fzz $out/bin/fzz
+        runHook postInstall
+      '';
 
       meta = with pkgs.lib; {
         description = "A lightweight watcher";
         homepage = "https://github.com/cristianoliveira/funzzy";
-        changelog = "https://github.com/cristianoliveira/funzzy/releases/tag/${src.rev}";
+        changelog = "https://github.com/cristianoliveira/funzzy/releases/tag/v${version}";
         license = licenses.mit;
         maintainers = [ ];
         mainProgram = "funzzy";
@@ -59,7 +71,20 @@ pkgs: {
       # Use importCargoLock instead of cargoHash/fetchCargoVendor.
       # fetchCargoVendor downloads many crates concurrently with Python requests and
       # is currently rejected by crates.io with HTTP 403 in GitHub Actions.
-      cargoLock.lockFile = ./Cargo-nightly.lock;
+      cargoLock = {
+        # crates.io currently returns HTTP 403 from GitHub Actions runners.
+        lockFileContents = builtins.replaceStrings
+          [ "registry+https://github.com/rust-lang/crates.io-index" ]
+          [ "registry+https://rsproxy.cn/index" ]
+          (builtins.readFile ./Cargo-nightly.lock);
+        extraRegistries."https://rsproxy.cn/index" = "https://rsproxy.cn/api/v1/crates";
+      };
+
+      postPatch = ''
+        substituteInPlace Cargo.lock \
+          --replace-fail 'registry+https://github.com/rust-lang/crates.io-index' \
+          'registry+https://rsproxy.cn/index'
+      '';
 
       buildInputs = pkgs.lib.optionals pkgs.stdenv.isDarwin [
         pkgs.libiconv

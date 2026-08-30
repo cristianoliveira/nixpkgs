@@ -49,10 +49,18 @@ check-flake: ## Check if the flake is valid
 
 .PHONY: build-all
 build-all: ## Build all packages (external + local, dynamically discovered)
-	@for pkg in $$(./scripts/list-packages.sh --all); do \
+	@packages="$$(./scripts/list-packages.sh --all)" || exit 1; \
+	failed=0; \
+	for pkg in $$packages; do \
 		echo "Building: $$pkg"; \
-		nix build ".#$$pkg" || echo "⚠️ Failed to build $$pkg"; \
-	done
+		if nix build ".#$$pkg"; then \
+			echo "✓ Successfully built $$pkg"; \
+		else \
+			echo "✗ Failed to build $$pkg" >&2; \
+			failed=1; \
+		fi; \
+	done; \
+	exit $$failed
 
 # External packages (from flakes)
 .PHONY: build-ergo

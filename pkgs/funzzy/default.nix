@@ -75,15 +75,15 @@ pkgs: {
         # crates.io currently returns HTTP 403 from GitHub Actions runners.
         lockFileContents = builtins.replaceStrings
           [ "registry+https://github.com/rust-lang/crates.io-index" ]
-          [ "registry+https://rsproxy.cn/index" ]
+          [ "registry+https://static.crates.io/index" ]
           (builtins.readFile ./Cargo-nightly.lock);
-        extraRegistries."https://rsproxy.cn/index" = "https://rsproxy.cn/api/v1/crates";
+        extraRegistries."https://static.crates.io/index" = "https://static.crates.io/crates";
       };
 
       postPatch = ''
         substituteInPlace Cargo.lock \
           --replace-fail 'registry+https://github.com/rust-lang/crates.io-index' \
-          'registry+https://rsproxy.cn/index'
+          'registry+https://static.crates.io/index'
       '';
 
       buildInputs = pkgs.lib.optionals pkgs.stdenv.isDarwin [

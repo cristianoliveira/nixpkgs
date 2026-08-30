@@ -34,7 +34,7 @@ pkgs: {
 
     # Prebuilt glibc-linked binary needs interpreter/rpath patching on Linux.
     nativeBuildInputs = pkgs.lib.optionals pkgs.stdenv.isLinux [ pkgs.autoPatchelfHook ];
-    buildInputs = pkgs.lib.optionals pkgs.stdenv.isLinux [ pkgs.stdenv.cc.cc.lib ];
+    buildInputs = pkgs.lib.optionals pkgs.stdenv.isLinux [ pkgs.stdenv.cc.cc.lib pkgs.zlib ];
 
     installPhase = ''
       runHook preInstall

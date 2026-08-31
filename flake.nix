@@ -53,7 +53,7 @@
           handyPackage =
             if handyPackages ? handy then
               handyPackages.handy.overrideAttrs
-                (_: {
+                (old: {
                   cargoDeps = pkgs.rustPlatform.importCargoLock {
                     # crates.io API returns HTTP 403 from GitHub Actions runners.
                     lockFileContents = builtins.replaceStrings
@@ -63,6 +63,12 @@
                     extraRegistries."https://static.crates.io/index" = "https://static.crates.io/crates";
                     allowBuiltinFetchGit = true;
                   };
+                  postPatch = (old.postPatch or "") + ''
+                    substituteInPlace src-tauri/Cargo.lock \
+                      --replace-fail 'registry+https://github.com/rust-lang/crates.io-index' \
+                      'registry+https://static.crates.io/index'
+                  '';
+
                 })
             else
               null;

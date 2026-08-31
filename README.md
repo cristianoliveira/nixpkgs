@@ -11,7 +11,7 @@ Personal collection of packages distributed as a Nix flake. Overlay-ready — in
 | Category | Packages |
 |----------|----------|
 | **AI / Agents** | `pi` — Pi coding assistant · `opencode` — terminal-first AI editor · `deltoids` — code review in the agentic era |
-| **CLI tools** | `funzzy` / `funzzyNightly` — file watcher · `gob` / `beads` — process & workspace managers · `qmd` — quick markdown · `zclaw` / `zeroclaw` — git tooling |
+| **CLI tools** | `funzzy` / `funzzyNightly` — file watcher · `gob` / `beads` — process & workspace managers · `qmd` — quick markdown · `zeroclaw` — git tooling |
 | **Browser / Web** | `surf-cli` — browser automation · `playwright-cli` — Playwright CLI · `putio-cli` — put.io client |
 | **Productivity** | `ferrite` — · `codex` — · `confluence-cli` · `teamcity-cli` · `mcp-cli` |
 | **Media** | `gogcli` / `goplaces` — GOG client · `opensubtitles` — subtitle CLI |

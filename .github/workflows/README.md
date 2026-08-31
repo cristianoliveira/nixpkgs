@@ -90,7 +90,6 @@ For Rust packages that follow a standard pattern (using `fetchFromGitHub` and `b
 ```bash
 declare -A RUST_PACKAGES=(
   ["zeroclaw"]="https://github.com/zeroclaw-labs/zeroclaw"
-  ["zclaw"]="https://github.com/cristianoliveira/zclaw"
   ["mypackage"]="https://github.com/owner/mypackage"  # Add this line
 )
 ```

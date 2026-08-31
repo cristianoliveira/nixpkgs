@@ -50,6 +50,28 @@
           aerospaceScratchpad = withGo126 (import aerospace-scratchpad { inherit pkgs; }).default;
           aerospaceMarks = withGo126 (import aerospace-marks { inherit pkgs; }).default;
           handyPackages = handy.packages.${system} or { };
+          handyPackage =
+            if handyPackages ? handy then
+              handyPackages.handy.overrideAttrs
+                (old: {
+                  cargoDeps = pkgs.rustPlatform.importCargoLock {
+                    # crates.io API returns HTTP 403 from GitHub Actions runners.
+                    lockFileContents = builtins.replaceStrings
+                      [ "registry+https://github.com/rust-lang/crates.io-index" ]
+                      [ "registry+https://static.crates.io/index" ]
+                      (builtins.readFile (handy + /src-tauri/Cargo.lock));
+                    extraRegistries."https://static.crates.io/index" = "https://static.crates.io/crates";
+                    allowBuiltinFetchGit = true;
+                  };
+                  postPatch = (old.postPatch or "") + ''
+                    substituteInPlace src-tauri/Cargo.lock \
+                      --replace-fail 'registry+https://github.com/rust-lang/crates.io-index' \
+                      'registry+https://static.crates.io/index'
+                  '';
+
+                })
+            else
+              null;
         in
         {
           sway-setter = swaysetterPkgs.default;
@@ -61,8 +83,8 @@
           mcpli = mcpli.packages.${system}.default;
           mcpliFork = mcplifork.packages.${system}.default;
         }
-        // pkgs.lib.optionalAttrs (handyPackages ? handy) {
-          handy = handyPackages.handy;
+        // pkgs.lib.optionalAttrs (handyPackage != null) {
+          handy = handyPackage;
         };
       overlay = final: prev:
         let

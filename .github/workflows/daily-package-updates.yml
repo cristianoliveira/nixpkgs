@@ -162,9 +162,6 @@ jobs:
               elif [ -f "result/bin/zeroclaw" ] && [ "$pkg" == "zeroclaw" ]; then
                 echo "Version check:"
                 "./result/bin/zeroclaw" --version || true
-              elif [ -f "result/bin/zeroclaw" ] && [ "$pkg" == "zclaw" ]; then
-                echo "Version check:"
-                "./result/bin/zeroclaw" --version || true
               fi
             else
               echo "✗ Failed to build $pkg"

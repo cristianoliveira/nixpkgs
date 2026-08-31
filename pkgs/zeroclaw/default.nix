@@ -13,8 +13,20 @@ pkgs: {
     inherit version src;
 
     cargoLock = {
-      lockFile = "${src}/Cargo.lock";
+      # Use the official crates.io CDN directly; crates.io API requests are
+      # rate-limited in CI while the static CDN remains available.
+      lockFileContents = builtins.replaceStrings
+        [ "registry+https://github.com/rust-lang/crates.io-index" ]
+        [ "registry+https://static.crates.io/index" ]
+        (builtins.readFile "${src}/Cargo.lock");
+      extraRegistries."https://static.crates.io/index" = "https://static.crates.io/crates";
     };
+
+    postPatch = ''
+      substituteInPlace Cargo.lock \
+        --replace-fail 'registry+https://github.com/rust-lang/crates.io-index' \
+        'registry+https://static.crates.io/index'
+    '';
 
     doCheck = false;
 

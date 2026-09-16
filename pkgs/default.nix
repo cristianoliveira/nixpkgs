@@ -29,6 +29,7 @@ pkgs:
   inherit (import ./toon pkgs) toon;
   inherit (import ./figma-cli pkgs) figma-cli;
   inherit (import ./pxp pkgs) pxp;
+  inherit (import ./brouter pkgs) brouter;
 }
 // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
   inherit (import ./pi-node pkgs) pi-node;

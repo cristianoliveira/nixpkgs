@@ -15,10 +15,11 @@ Personal collection of packages distributed as a Nix flake. Overlay-ready — in
 | **Browser / Web** | `surf-cli` — browser automation · `playwright-cli` — Playwright CLI · `putio-cli` — put.io client |
 | **Productivity** | `ferrite` — · `codex` — · `confluence-cli` · `teamcity-cli` · `mcp-cli` |
 | **Media** | `gogcli` / `goplaces` — GOG client · `opensubtitles` — subtitle CLI |
+| **Design / Visual** | `figma-cli` — Figma design data · `pxp` — screenshot comparison · `omasnap` — Wayland screenshot annotation |
 | **macOS** | `aerospace-scratchpad` · `aerospace-marks` · `handy` |
 | **External** | `ergoProxy` · `sway-setter` · `mcpli` / `mcpliFork` |
 
-**30 packages** total. Run `make list-packages` or `./scripts/list-packages.sh` for the full dynamic list.
+**36 packages** total. Run `make list-packages` or `./scripts/list-packages.sh` for the full dynamic list.
 
 ## Usage
 

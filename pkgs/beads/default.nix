@@ -1,16 +1,16 @@
 # Beads issue tracker and task management
 pkgs: {
   beads = let
-    version = "0.56.1";
+    version = "1.3.0";
 
     hashes = {
       darwin = {
-        aarch64 = "sha256-qopDCd4quMJ6kMA7ZSztxTpFiApclM1liBAG2jwvCBI=";
-        amd64 = "sha256-yYeQFnfph4TrJNJhO5tU4HlSZJetedzlxvE2TPzMhRs=";
+        aarch64 = "sha256-fMdzZ9C4TFAkOhEIvB9zZIaZIRJX1BS5F1QL+Gjmu4U=";
+        amd64 = "sha256-39imkYvCpYoNvHJ/fkA5dm4yPfoV5MyrJQ1kCFHikNU=";
       };
       linux = {
-        aarch64 = "sha256-pphWD0MoGdkdRThgpti8N7fTj5AbRLDTDVPPazlLm9A=";
-        amd64 = "sha256-T59sxERloRYT/1KQCZAeqvhBxrH5HBXgArDs2iAVoVw=";
+        aarch64 = "sha256-TOlEamjtwTICt2yEpH1m+z2tJ4e2RkyVIqEI+vnBxgg=";
+        amd64 = "sha256-L5K5BOzzW2B+RNxcOSKRc69pxU8Rg+jXCfF3NUDNzzs=";
       };
     };
 

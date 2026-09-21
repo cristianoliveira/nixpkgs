@@ -1,7 +1,7 @@
 # Modern Google Places CLI in Go
 pkgs: {
   goplaces = let
-    version = "0.3.0";
+    version = "0.4.11";
 
     archFile = if pkgs.stdenv.isDarwin then
       if pkgs.stdenv.isAarch64 then "goplaces_${version}_darwin_arm64.tar.gz"
@@ -14,10 +14,10 @@ pkgs: {
     # nix store prefetch-file https://github.com/steipete/goplaces/releases/download/v0.3.0/goplaces_0.3.0_linux_arm64.tar.gz
     # nix store prefetch-file https://github.com/steipete/goplaces/releases/download/v0.3.0/goplaces_0.3.0_linux_amd64.tar.gz
     sha256 = if pkgs.stdenv.isDarwin then
-      if pkgs.stdenv.isAarch64 then "sha256-FAhLzN7CbMghXNTLPOyaRHJjMuUt+LlDoWRV0zQSpmU="
-      else "sha256-Rue66IenX9MX69nAwDGDMSN5+2LzzeZ8nE7N2eCvR1E="
-    else if pkgs.stdenv.isAarch64 then "sha256-IhwA/xN7SqdoNd7WB+RtOKHsmGyo+62IZDBEDWfevRs="
-    else "sha256-z6eNTZo2K7wsPT/3d3Fg+1pZlN5+hSGwBIG3LUBTsec=";
+      if pkgs.stdenv.isAarch64 then "sha256-k4eJbIGuxHBlEO/WDdlY+99QVuapaN3eoQrU+XI5QCg="
+      else "sha256-WuGUDysXJKNToHFmQQ3v2kLAdqwej4KEyB3t6SleSsU="
+    else if pkgs.stdenv.isAarch64 then "sha256-Rfwk7QDYk+7yGH6/9j4Vk/yyHLgqCTt67s142y4hpac="
+    else "sha256-oLajAHaeUyECovZS+imBOibEVgjqQNg2/Zfq2Msl5lo=";
 
     src = pkgs.fetchurl {
       url = "https://github.com/steipete/goplaces/releases/download/v${version}/${archFile}";

@@ -1,7 +1,7 @@
 # Ferrite text editor
 pkgs: {
   ferrite = let
-    version = "0.2.3";
+    version = "0.3.0";
 
     filename = if pkgs.stdenv.isDarwin then
       if pkgs.stdenv.isAarch64 then "ferrite-macos-arm64.tar.gz"
@@ -12,11 +12,11 @@ pkgs: {
     else throw "Ferrite v${version} unsupported platform";
 
     sha256 = if pkgs.stdenv.isDarwin then
-      if pkgs.stdenv.isAarch64 then "sha256-qKQRoPBq2lktZRQbh80xWR5CLljuv8h6aomVEPowBmg=" else
-      "sha256-WxmHjMTr9ihtZVrzB/s31SZepAHGfEyoI5ItWGjH7oI="
+      if pkgs.stdenv.isAarch64 then "sha256-rXZHZnhwa/0ExNh03qf0BE3Z7OeEI0Rxfgk6oLuBK8Y=" else
+      "sha256-PyTYZ8+1wUeLyE6buhRPK9dQdSixu3QyPO7M5T8+v6E="
     else if pkgs.stdenv.isLinux then
       if pkgs.stdenv.isAarch64 then throw "Ferrite v${version} not available for aarch64-linux"
-      else "sha256-81HmxZalj3AsHdxq1AXmpwZchMklWLHnu1gwvIgL0RA="
+      else "sha256-M4sgG/Bxco3bCLdGYAglfo4+cyXHF1hsv+XMXtzGPtg="
     else throw "Ferrite v${version} unsupported platform";
 
     src = pkgs.fetchurl {
@@ -40,7 +40,11 @@ pkgs: {
     installPhase = ''
       runHook preInstall
       mkdir -p $out/bin
-      cp ferrite $out/bin/ferrite
+      if [ -x Ferrite.app/Contents/MacOS/ferrite ]; then
+        cp Ferrite.app/Contents/MacOS/ferrite $out/bin/ferrite
+      else
+        cp ferrite $out/bin/ferrite
+      fi
       chmod +x $out/bin/ferrite
       runHook postInstall
     '';

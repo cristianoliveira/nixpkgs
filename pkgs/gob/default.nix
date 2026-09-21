@@ -1,7 +1,7 @@
 # Process manager for AI agents (and humans)
 pkgs: {
   gob = let
-    version = "3.4.0";
+    version = "3.7.1";
 
     # Determine the architecture-specific file
     archFile = if pkgs.stdenv.isDarwin then
@@ -16,10 +16,10 @@ pkgs: {
     # nix-prefetch-url https://github.com/juanibiapina/gob/releases/download/v2.2.2/gob_2.2.2_linux_arm64.tar.gz
     # nix-prefetch-url https://github.com/juanibiapina/gob/releases/download/v2.2.2/gob_2.2.2_linux_amd64.tar.gz
     sha256 = if pkgs.stdenv.isDarwin then
-      if pkgs.stdenv.isAarch64 then "sha256-kQdReGzWAiBWOMCKDkM6VxxMuww67ovmlMJkkzNFXI8="
-      else "sha256-+l2sWj+OCMhoS9ntuEEZAUGmHXSVWxU6z8wSs+4fPNU="
-    else if pkgs.stdenv.isAarch64 then "sha256-mx/sp/uyY9RX+nFbVqBcHY3MqD4idA5UzfxTVQiupTE="
-    else "sha256-EuQCWg4bF0nLPQMHpf7glryjJHdf9DX3Sx1Zf51KcIU=";
+      if pkgs.stdenv.isAarch64 then "sha256-GtQB07v2Ac0ugz62fnCORkkqjeg29Llje0XzSjoykpc="
+      else "sha256-itMeIRu/amxvlyFunsAMR4BJ7GT9gPzIXl2X0JZ0EAQ="
+    else if pkgs.stdenv.isAarch64 then "sha256-E92uDH/VnUkG3QVaQXAmh+VB24ce6LWEZuX3kRswn3w="
+    else "sha256-kLTOrg4HOf8Dwjsl3JmBzMblh9heWXeLWfsaBlNCfvI=";
 
     src = pkgs.fetchurl {
       url = "https://github.com/juanibiapina/gob/releases/download/v${version}/${archFile}";

@@ -2,23 +2,23 @@
 pkgs: {
   surf-cli =
     let
-      version = "2.7.2";
+      version = "2.19.0";
       src = pkgs.fetchFromGitHub {
         owner = "nicobailon";
         repo = "surf-cli";
         rev = "v${version}";
-        sha256 = "sha256-Ktyg7kfw2CV4EBbxkxtqlClp9fZq2G6CCIrAE4sWXEU=";
+        sha256 = "sha256-HRLOnS3EarI1LE7uEJjaFCFsdAdnr1xJHjWQgMc46Gk=";
       };
       dist = pkgs.fetchurl {
         url = "https://registry.npmjs.org/surf-cli/-/surf-cli-${version}.tgz";
-        hash = "sha256-NGChJiVV2XGe+9jnTqYXJbhxDY9XfxoSubPxbsP+vjE=";
+        hash = "sha256-nlabMQGms4j1sY8jWhYiCNfOpdWcWBUCwvrzrWM/EjE=";
       };
     in
     pkgs.buildNpmPackage {
       pname = "surf-cli";
       inherit version src;
 
-      npmDepsHash = "sha256-lmSqdviehbyQgHKcbl6/pgP5l/DrxqQly8ek3QO+9RA=";
+      npmDepsHash = "sha256-KBaougk/KZGykT8XXDUndWq0hclN8ALC9Ukv7lxx5v0=";
       dontNpmBuild = true;
 
       postUnpack = ''

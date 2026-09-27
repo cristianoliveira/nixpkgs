@@ -28,6 +28,7 @@ pkgs:
   inherit (import ./websearch pkgs) websearch;
   inherit (import ./toon pkgs) toon;
   inherit (import ./figma-cli pkgs) figma-cli;
+  inherit (import ./jeq pkgs) jeq;
   inherit (import ./pxp pkgs) pxp;
   inherit (import ./brouter pkgs) brouter;
 }

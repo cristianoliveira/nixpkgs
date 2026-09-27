@@ -10,7 +10,7 @@ Personal collection of packages distributed as a Nix flake. Overlay-ready — in
 
 | Category | Packages |
 |----------|----------|
-| **AI / Agents** | `pi` — Pi coding assistant · `opencode` — terminal-first AI editor · `deltoids` — code review in the agentic era |
+| **AI / Agents** | `jeq` — typed-judgment CLI · `pi` — Pi coding assistant · `opencode` — terminal-first AI editor · `deltoids` — code review in the agentic era |
 | **CLI tools** | `funzzy` / `funzzyNightly` — file watcher · `gob` / `beads` — process & workspace managers · `qmd` — quick markdown · `zeroclaw` — git tooling |
 | **Browser / Web** | `surf-cli` — browser automation · `playwright-cli` — Playwright CLI · `putio-cli` — put.io client |
 | **Productivity** | `ferrite` — · `codex` — · `confluence-cli` · `teamcity-cli` · `mcp-cli` |
@@ -19,7 +19,7 @@ Personal collection of packages distributed as a Nix flake. Overlay-ready — in
 | **macOS** | `aerospace-scratchpad` · `aerospace-marks` · `handy` |
 | **External** | `ergoProxy` · `sway-setter` · `mcpli` / `mcpliFork` |
 
-**36 packages** total. Run `make list-packages` or `./scripts/list-packages.sh` for the full dynamic list.
+Package availability varies by platform. Run `make list-packages` or `./scripts/list-packages.sh` for the current list.
 
 ## Usage
 
@@ -31,7 +31,10 @@ nix profile install github:cristianoliveira/nixpkgs#funzzy
 
 # Try without installing
 nix run github:cristianoliveira/nixpkgs#pi -- --help
+nix run github:cristianoliveira/nixpkgs#jeq -- version
 ```
+
+`jeq` uses the verified v0.1.0 release archive for your macOS or Linux architecture. The package checks the archive's published SHA-256 before installing it. `jeq version` reports the release tag and commit.
 
 ### As an overlay
 

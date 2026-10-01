@@ -16,7 +16,7 @@ Personal collection of packages distributed as a Nix flake. Overlay-ready — in
 | **Productivity** | `ferrite` — · `codex` — · `confluence-cli` · `teamcity-cli` · `mcp-cli` |
 | **Media** | `gogcli` / `goplaces` — GOG client · `opensubtitles` — subtitle CLI |
 | **Design / Visual** | `figma-cli` — Figma design data · `pxp` — screenshot comparison · `omasnap` — Wayland screenshot annotation |
-| **macOS** | `aerospace-scratchpad` · `aerospace-marks` · `handy` |
+| **macOS** | `aerospace-scratchpad` · `aerospace-marks` · `aerospace-gestures` · `handy` |
 | **External** | `ergoProxy` · `sway-setter` · `mcpli` / `mcpliFork` |
 
 Package availability varies by platform. Run `make list-packages` or `./scripts/list-packages.sh` for the current list.

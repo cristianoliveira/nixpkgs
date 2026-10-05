@@ -25,11 +25,11 @@
         "utils": "utils_2"
       },
       "locked": {
-        "lastModified": 1784100304,
-        "narHash": "sha256-/m3qkbdQum/PVWBv3jWk5nS3kat3qGBOxVTSLgTpkkc=",
+        "lastModified": 1791184820,
+        "narHash": "sha256-r4/GsoeGey1YdMvW9b9XEgRkjc1VT80umqYERJ1xzSM=",
         "owner": "cristianoliveira",
         "repo": "aerospace-scratchpad",
-        "rev": "744f8792b9ffce24a9524d15f715d9037432620f",
+        "rev": "5a21995dba7ad7a04c79a421c78a5b8eeeeb5f07",
         "type": "github"
       },
       "original": {

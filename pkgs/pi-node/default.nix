@@ -21,7 +21,7 @@
         owner = "earendil-works";
         repo = "pi";
         rev = "v${version}";
-        hash = "sha256-9oYOZ1JNJK2fhR/g0ZsYTvgcfS598b85xlc2Vb0ROYw=";
+        hash = "sha256-CGznIVHXG6gr2F8vzHcR/v4P9xJgZHeMTt/CJ/kB78o=";
       };
 
       npmDepsHash = "sha256-ndEvWdB6sa5nNNtabk2OMZKUFG9x3op185deZHxFnXk=";

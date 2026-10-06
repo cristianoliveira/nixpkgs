@@ -52,7 +52,6 @@ declare -A PACKAGE_UPDATE_METHODS=(
 
 # Packages to check for rust updates (from GitHub)
 declare -A RUST_PACKAGES=(
-["zeroclaw"]="https://github.com/zeroclaw-labs/zeroclaw"
 ["ferrite"]="https://github.com/juanibiapina/ferrite"
 ["mcp-cli"]="https://github.com/cristianoliveira/mcp-cli"
 ["qmd"]="https://github.com/cristianoliveira/qmd"

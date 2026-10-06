@@ -18,7 +18,6 @@ pkgs:
   inherit (import ./funzzy pkgs) funzzy funzzyNightly;
   inherit (import ./pi pkgs) pi;
   inherit (import ./playwright-cli pkgs) playwright-cli;
-  inherit (import ./zeroclaw pkgs) zeroclaw;
   inherit (import ./opensubtitles pkgs) opensubtitles;
   inherit (import ./teamcity-cli pkgs) teamcity-cli;
   inherit (import ./deltoids pkgs) deltoids;

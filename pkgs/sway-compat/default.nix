@@ -1,13 +1,13 @@
 # macOS-style window cycling and focus history for Sway
 pkgs: {
-  sway-compat = pkgs.buildGoModule {
+  sway-compat = pkgs.buildGoModule rec {
     pname = "sway-compat";
-    version = "unstable-2026-10-08";
+    version = "0.1.0";
 
     src = pkgs.fetchFromGitHub {
       owner = "cristianoliveira";
       repo = "sway-compat";
-      rev = "6a6947fc78754140c494c542614104c9ffeec409";
+      rev = "v${version}";
       hash = "sha256-ZlriCDSY2+DL9H5zzBetAaHLkvscAV1SgcnPWwBpE8M=";
     };
 
@@ -16,7 +16,7 @@ pkgs: {
     ldflags = [
       "-s"
       "-w"
-      "-X github.com/cristianoliveira/sway-compat/cmd.version=unstable-2026-10-08"
+      "-X github.com/cristianoliveira/sway-compat/cmd.version=${version}"
     ];
 
     meta = with pkgs.lib; {

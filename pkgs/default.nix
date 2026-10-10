@@ -36,6 +36,7 @@ pkgs:
   inherit (import ./pi-node pkgs) pi-node;
   inherit (import ./omasnap pkgs) omasnap;
   inherit (import ./sway-compat pkgs) sway-compat;
+  inherit (import ./ulauncher-sway-plus pkgs) ulauncher-sway-plus;
 }
   // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
   inherit (import ./aerospace pkgs) aerospace;

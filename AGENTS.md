@@ -17,3 +17,4 @@ IMPORTANT: Before completing your work check if the packages are working:
  - Run: `nix run .#<mypackage> -- --help`
  - It should present the help for that cli
  - Run: `nix flake check`
+ - And push to origin main

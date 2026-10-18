@@ -2,13 +2,13 @@
 pkgs: {
   sway-compat = pkgs.buildGoModule rec {
     pname = "sway-compat";
-    version = "0.1.0";
+    version = "0.2.0";
 
     src = pkgs.fetchFromGitHub {
       owner = "cristianoliveira";
       repo = "sway-compat";
       rev = "v${version}";
-      hash = "sha256-ZlriCDSY2+DL9H5zzBetAaHLkvscAV1SgcnPWwBpE8M=";
+      hash = "sha256-22uc2v/HWlhsIcQmyKnto2cAJmiDhEOgP95qckDNk0k=";
     };
 
     vendorHash = "sha256-s7gzjDfmk0YEAhfKRCTzIE4Fn/6mHaE5rXV22WzrCMk=";

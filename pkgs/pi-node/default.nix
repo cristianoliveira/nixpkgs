@@ -1,7 +1,7 @@
 { pkgs ? import <nixpkgs> { }, ... }: {
   pi-node =
     let
-      version = "1.1.0";
+      version = "1.3.0";
 
       # Upstream does not check in packages/ai/src/providers/data (gitignored) and
       # build:offline fails without it. The npm tarball of @earendil-works/pi-ai is
@@ -10,7 +10,7 @@
       # Bump this hash together with version.
       modelDataTarball = pkgs.fetchurl {
         url = "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-${version}.tgz";
-        hash = "sha256-bKqzPOxXSA7QLFf+N0KKAwp3zCoGYoFLQ1pc+JMq2Ck=";
+        hash = "sha256-U0PhY5vzQ73DNE3zrWwxwFpQtoutB6xrzhCJDUtrimE=";
       };
     in
     pkgs.buildNpmPackage rec {
@@ -21,10 +21,10 @@
         owner = "earendil-works";
         repo = "pi";
         rev = "v${version}";
-        hash = "sha256-brmB7w+8GP2VpSNEe6zny033Mmz8uvCU+3RrGt+RTd4=";
+        hash = "sha256-jK/QmoAGIzXtZRHVZWcYgmQWBHjXhlPsta59avtJ1T4=";
       };
 
-      npmDepsHash = "sha256-GOh5WG+rRgzoy/yVHY5PoEKJZGQcEGhISrDDJxkP8W4=";
+      npmDepsHash = "sha256-+gFyvrhkCsF99oNvs0gBmLXnDW0hWnZI/wFId7UbI6Q=";
       npmBuildScript = "build:offline";
 
       nativeBuildInputs = [

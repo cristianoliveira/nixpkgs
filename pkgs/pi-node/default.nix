@@ -20,8 +20,9 @@
       src = pkgs.fetchFromGitHub {
         owner = "earendil-works";
         repo = "pi";
-        rev = "v${version}";
-        hash = "sha256-jFta/9MAXcnKfxNPD+sK+QfWqwLOntiMUS+ylX2Ys/U=";
+        # Pin the commit referenced by the v1.4.0 release tag.
+        rev = "4a080252f06caf63a525d7873c5d94d3c23887e0";
+        hash = "sha256-N9NOpiiZTbOMDMV+CxvJAgtLjJJ1/8NJBGS0cFHkhsc=";
       };
 
       npmDepsHash = "sha256-aBzVz78IxZQlzPYC72Ufa2YFtkow6nZR24YBYZrv9W0=";

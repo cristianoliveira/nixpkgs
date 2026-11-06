@@ -1,7 +1,7 @@
 { pkgs ? import <nixpkgs> { }, ... }: {
   pi =
     let
-      version = "1.4.0";
+      version = "1.5.0";
 
       # Determine the architecture-specific file
       archFile =
@@ -18,10 +18,10 @@
       # nix-prefetch-url https://github.com/earendil-works/pi/releases/download/v${version}/pi-linux-x64.tar.gz
       sha256 =
         if pkgs.stdenv.isDarwin then
-          if pkgs.stdenv.isAarch64 then "sha256-edmXnXaipa23wo4n6bRGKZKMzQ3J+7aucheGC9Xovl0="
-          else "sha256-G978nhB0wd5Fjqny5D5gE85JzQUyYAmz3hRANwNlheI="
-        else if pkgs.stdenv.isAarch64 then "sha256-+lgpx++D/+rrugFXFcgwYiD4myqooAFU77upjdVEAVY="
-        else "sha256-8uTkMpYDIj0DJgzbi9UDPb3B9zuliriTnbLlZUbhFdI=";
+          if pkgs.stdenv.isAarch64 then "sha256-qb8NgtWNKn0zf0rkFxtfyev/5CUJUnqDE2TEtlrfLN8="
+          else "sha256-9BsmzZoXVKviWeBaQh+zOwCTZ3nLB4PIk6Y4nRvS7g0="
+        else if pkgs.stdenv.isAarch64 then "sha256-XVcRtIYAdWRzaC6GNgsCaxGr91keXREutBHU2iwQDZo="
+        else "sha256-34cLoONEy3szWNjY8ZOXuLjSJahml4RzataKXCFp1Ts=";
 
       src = pkgs.fetchurl {
         url = "https://github.com/earendil-works/pi/releases/download/v${version}/${archFile}";

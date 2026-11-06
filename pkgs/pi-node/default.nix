@@ -1,7 +1,7 @@
 { pkgs ? import <nixpkgs> { }, ... }: {
   pi-node =
     let
-      version = "1.4.0";
+      version = "1.5.0";
 
       # Upstream does not check in packages/ai/src/providers/data (gitignored) and
       # build:offline fails without it. The npm tarball of @earendil-works/pi-ai is
@@ -10,7 +10,7 @@
       # Bump this hash together with version.
       modelDataTarball = pkgs.fetchurl {
         url = "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-${version}.tgz";
-        hash = "sha256-tA4rqLtvwzKQj4uW6DfcLR/ftF65zTgvWu0RFGKYHjw=";
+        hash = "sha256-4yD+e9K5J3grqaN9NW/lg38aqWpGQyYQ4bO5zLdI6lw=";
       };
     in
     pkgs.buildNpmPackage rec {
@@ -20,12 +20,12 @@
       src = pkgs.fetchFromGitHub {
         owner = "earendil-works";
         repo = "pi";
-        # Pin the commit referenced by the v1.4.0 release tag.
-        rev = "4a080252f06caf63a525d7873c5d94d3c23887e0";
-        hash = "sha256-N9NOpiiZTbOMDMV+CxvJAgtLjJJ1/8NJBGS0cFHkhsc=";
+        # Pin the commit referenced by the v1.5.0 release tag.
+        rev = "f9a26365568127461c47a07a37dcb42c140a3ac5";
+        hash = "sha256-eH3RuypmXeayuZ9lEag6KW3m2LSM4bDc4ogyHxjZMNI=";
       };
 
-      npmDepsHash = "sha256-aBzVz78IxZQlzPYC72Ufa2YFtkow6nZR24YBYZrv9W0=";
+      npmDepsHash = "sha256-koVd02HEhEAOkcvIuUg4X1A6P6P0B+wJp4DJLwkH62w=";
       npmBuildScript = "build:offline";
 
       nativeBuildInputs = [

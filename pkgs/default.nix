@@ -4,6 +4,7 @@ pkgs:
 {
   # Import all packages using the standard pattern
   inherit (import ./brave pkgs) brave;
+  inherit (import ./herdr pkgs) herdr;
   inherit (import ./opencode pkgs) opencode;
   inherit (import ./codex pkgs) codex;
   inherit (import ./ferrite pkgs) ferrite;
@@ -32,6 +33,9 @@ pkgs:
   inherit (import ./jeq pkgs) jeq;
   inherit (import ./pxp pkgs) pxp;
   inherit (import ./brouter pkgs) brouter;
+}
+// pkgs.lib.optionalAttrs (pkgs.stdenv.isLinux || (pkgs.stdenv.isDarwin && pkgs.stdenv.isAarch64)) {
+  inherit (import ./herdr-app pkgs) herdr-app;
 }
 // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
   inherit (import ./pi-node pkgs) pi-node;

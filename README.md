@@ -10,7 +10,7 @@ Personal collection of packages distributed as a Nix flake. Overlay-ready — in
 
 | Category | Packages |
 |----------|----------|
-| **AI / Agents** | `jeq` — typed-judgment CLI · `pi` — Pi coding assistant · `opencode` — terminal-first AI editor · `deltoids` — code review in the agentic era · `herdr` — coding agent terminal runtime · `herdr-app` — desktop terminal manager |
+| **AI / Agents** | `jeq` — typed-judgment CLI · `pi` — Pi coding assistant · `opencode` — terminal-first AI editor · `deltoids` — code review in the agentic era · `herdr` — coding agent terminal runtime · `herdr-core` — standalone terminal backend (`hc`) · `herdr-app` — desktop terminal manager |
 | **CLI tools** | `funzzy` / `funzzyNightly` — file watcher · `gob` / `beads` — process & workspace managers · `qmd` — quick markdown · `sway-compat` — macOS-style window switching for Sway · `ulauncher-sway-plus` — Ulauncher extension for Sway |
 | **Browser / Web** | `brave` — Brave browser · `surf-cli` — browser automation · `playwright-cli` — Playwright CLI · `putio-cli` — put.io client |
 | **Productivity** | `ferrite` — · `codex` — · `confluence-cli` · `teamcity-cli` · `mcp-cli` |
@@ -82,7 +82,7 @@ nix run github:cristianoliveira/nixpkgs#jeq -- version
 }
 ```
 
-The `herdr-app` command adds a compatible `herdr-core` to PATH; this core is distinct from the `herdr` terminal runtime. On macOS, launching the app bundle directly bypasses that wrapper and may require a separate core installation. The app is available for Linux and Apple Silicon macOS. Upstream release builds enable telemetry by default; disable it in Settings → Privacy or set `HERDR_TELEMETRY=0`. Upstream also checks for updates and can download a core outside Nix when requested.
+`herdr-core` runs terminals independently of the desktop app; use `nix run .#herdr-core -- --help` or install it to access `hc`. The `herdr-app` command adds the same core package to PATH; this core is distinct from the `herdr` terminal runtime. On macOS, launching the app bundle directly bypasses that wrapper and may require a separate core installation. The app is available for Linux and Apple Silicon macOS. Upstream release builds enable telemetry by default; disable it in Settings → Privacy or set `HERDR_TELEMETRY=0`. Upstream also checks for updates and can download a core outside Nix when requested.
 
 ## Brave updates
 

@@ -8,35 +8,8 @@ let
     x86_64-linux = "sha256-d7C+cqRsoUuzZzZaBBZGQfkUs6aXErrDkdOcVqlZvvQ=";
     aarch64-darwin = "sha256-9d0LyBqp72HPv7bvn9v0/n9mTU7Gdu4NyI8TzJdZ0NA=";
   };
-  coreHashes = {
-    aarch64-linux = "sha256-zzM5PPlQu3Y3NNw+FmEKudr4SSORpO8N5WAmzX91KFM=";
-    x86_64-linux = "sha256-Wy+Xy0sqnXprLMWUJiggPtn7t8wMK0sJrYpvVkjiRrc=";
-    aarch64-darwin = "sha256-d9ivCS4lrmUPRCTW2tJ1FPaRahHYB/sHUoWM0nwh5Pw=";
-  };
   target = if stdenv.isDarwin then "macos-aarch64" else if stdenv.isAarch64 then "linux-aarch64" else "linux-x86_64";
-  core = stdenv.mkDerivation rec {
-    pname = "herdr-core";
-    version = "0.1.18";
-    src = pkgs.fetchurl {
-      url = "https://releases.herdr.dev/core/${version}/herdr-core-${target}.tar.gz";
-      hash = coreHashes.${system};
-    };
-    sourceRoot = ".";
-    dontStrip = true;
-    installPhase = ''
-      runHook preInstall
-      mkdir -p "$out/bin"
-      ${if stdenv.isDarwin then ''
-        mkdir -p "$out/Applications"
-        cp -R "Herdr Core.app" "$out/Applications/"
-        ln -s "$out/Applications/Herdr Core.app/Contents/MacOS/herdr-core" "$out/bin/herdr-core"
-      '' else ''
-        install -m755 herdr-core "$out/bin/herdr-core"
-      ''}
-      ln -s herdr-core "$out/bin/hc"
-      runHook postInstall
-    '';
-  };
+  core = (import ../herdr-core pkgs).herdr-core;
 in
 {
   herdr-app = stdenv.mkDerivation rec {

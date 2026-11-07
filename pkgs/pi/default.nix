@@ -37,7 +37,7 @@
 
       buildInputs = pkgs.lib.optionals pkgs.stdenv.isLinux [
         pkgs.stdenv.cc.cc.lib
-        pkgs.libxcb
+        pkgs.xorg.libxcb
       ];
 
       sourceRoot = ".";

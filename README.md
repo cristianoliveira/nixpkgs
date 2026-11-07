@@ -12,7 +12,7 @@ Personal collection of packages distributed as a Nix flake. Overlay-ready — in
 |----------|----------|
 | **AI / Agents** | `jeq` — typed-judgment CLI · `pi` — Pi coding assistant · `opencode` — terminal-first AI editor · `deltoids` — code review in the agentic era |
 | **CLI tools** | `funzzy` / `funzzyNightly` — file watcher · `gob` / `beads` — process & workspace managers · `qmd` — quick markdown · `sway-compat` — macOS-style window switching for Sway · `ulauncher-sway-plus` — Ulauncher extension for Sway |
-| **Browser / Web** | `surf-cli` — browser automation · `playwright-cli` — Playwright CLI · `putio-cli` — put.io client |
+| **Browser / Web** | `brave` — Brave browser · `surf-cli` — browser automation · `playwright-cli` — Playwright CLI · `putio-cli` — put.io client |
 | **Productivity** | `ferrite` — · `codex` — · `confluence-cli` · `teamcity-cli` · `mcp-cli` |
 | **Media** | `gogcli` / `goplaces` — GOG client · `opensubtitles` — subtitle CLI |
 | **Design / Visual** | `figma-cli` — Figma design data · `pxp` — screenshot comparison · `omasnap` — Wayland screenshot annotation |
@@ -81,6 +81,10 @@ nix run github:cristianoliveira/nixpkgs#jeq -- version
   };
 }
 ```
+
+## Brave updates
+
+`brave` uses upstream binary releases for Linux and macOS. Its packaging is based on the last Nixpkgs Brave derivation. The daily update workflow checks for new releases. Run `python3 pkgs/brave/update.py` to update the stable release and its published hashes; build and test each supported platform before publishing. Brave is security-sensitive: monitor upstream releases and ship security updates promptly. Nixpkgs removed its package because it lacked a committer to maintain timely updates; this repository does not inherit Nixpkgs security maintenance.
 
 ## Development
 

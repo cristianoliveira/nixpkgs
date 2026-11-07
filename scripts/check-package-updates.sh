@@ -30,6 +30,7 @@ mkdir -p "$TMP_DIR"
 
 # List of packages with their update scripts/methods
 declare -A PACKAGE_UPDATE_METHODS=(
+["brave"]="script:pkgs/brave/update.sh"
 ["pi"]="script:pkgs/pi/update.sh"
 ["opencode"]="script:pkgs/opencode/upgrade-opencode"
 

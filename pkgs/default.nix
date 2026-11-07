@@ -3,6 +3,7 @@
 pkgs:
 {
   # Import all packages using the standard pattern
+  inherit (import ./brave pkgs) brave;
   inherit (import ./opencode pkgs) opencode;
   inherit (import ./codex pkgs) codex;
   inherit (import ./ferrite pkgs) ferrite;

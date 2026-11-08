@@ -1,12 +1,12 @@
 { lib, stdenv, fetchurl }:
 
 let
-  version = "0.6.0";
+  version = "0.7.0-alpha.1";
   archive = if stdenv.hostPlatform.isAarch64 then "darwin-arm64" else "darwin-amd64";
   hash = if stdenv.hostPlatform.isAarch64 then
-    "sha256-b4TBypJO+lhdul1DZxaWvP/A1ds97YZwFHWh1G4c40A="
+    "sha256-887mhHU5DodCgNj1bwb8CbMwhHpDGnLJNDyPVfgQF5A="
   else
-    "sha256-tHSBm9XVCrmmhbZqIL5sdvb8pLjX5/etz9OH96xZmaY=";
+    "sha256-j/0UoCYqHKBdLu1awV35N7hMyR+IfOP+zPfaD6ASbBY=";
 in
 stdenv.mkDerivation {
   pname = "aerospace-gestures";

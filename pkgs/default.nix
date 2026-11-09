@@ -47,5 +47,5 @@ pkgs:
   // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
   inherit (import ./aerospace pkgs) aerospace;
   inherit (import ./cornerfix pkgs) cornerfix;
-  inherit (import ./aerospace-gestures pkgs) aerospace-gestures;
+  inherit (import ./cafune pkgs) cafune;
 }

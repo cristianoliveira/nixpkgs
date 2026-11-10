@@ -34,6 +34,7 @@ pkgs:
   inherit (import ./jeq pkgs) jeq;
   inherit (import ./pxp pkgs) pxp;
   inherit (import ./brouter pkgs) brouter;
+  inherit (import ./spotifast pkgs) spotifast;
 }
 // pkgs.lib.optionalAttrs (pkgs.stdenv.isLinux || (pkgs.stdenv.isDarwin && pkgs.stdenv.isAarch64)) {
   inherit (import ./herdr-app pkgs) herdr-app;

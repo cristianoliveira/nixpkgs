@@ -14,7 +14,7 @@ Personal collection of packages distributed as a Nix flake. Overlay-ready — in
 | **CLI tools** | `funzzy` / `funzzyNightly` — file watcher · `gob` / `beads` — process & workspace managers · `qmd` — quick markdown · `sway-compat` — macOS-style window switching for Sway · `ulauncher-sway-plus` — Ulauncher extension for Sway |
 | **Browser / Web** | `brave` — Brave browser · `surf-cli` — browser automation · `playwright-cli` — Playwright CLI · `putio-cli` — put.io client |
 | **Productivity** | `ferrite` — · `codex` — · `confluence-cli` · `teamcity-cli` · `mcp-cli` |
-| **Media** | `gogcli` / `goplaces` — GOG client · `opensubtitles` — subtitle CLI |
+| **Media** | `gogcli` / `goplaces` — GOG client · `opensubtitles` — subtitle CLI · `spotifast` — native Spotify client |
 | **Design / Visual** | `figma-cli` — Figma design data · `pxp` — screenshot comparison · `omasnap` — Wayland screenshot annotation |
 | **macOS** | `aerospace-scratchpad` · `aerospace-marks` · `cafune` · `handy` |
 | **External** | `ergoProxy` · `sway-setter` · `mcpli` / `mcpliFork` |
@@ -83,6 +83,12 @@ nix run github:cristianoliveira/nixpkgs#jeq -- version
 ```
 
 `herdr-core` runs terminals independently of the desktop app; use `nix run .#herdr-core -- --help` or install it to access `hc`. The `herdr-app` command adds the same core package to PATH; this core is distinct from the `herdr` terminal runtime. On macOS, launching the app bundle directly bypasses that wrapper and may require a separate core installation. The app is available for Linux and Apple Silicon macOS. Upstream release builds enable telemetry by default; disable it in Settings → Privacy or set `HERDR_TELEMETRY=0`. Upstream also checks for updates and can download a core outside Nix when requested.
+
+## Spotifast
+
+`spotifast` packages the upstream 0.17.1 binaries for x86_64 and ARM64 Linux and macOS, with pinned release SHA-256 checksums. Run `nix run .#spotifast -- --help` for commands, or `nix run .#spotifast` to open the app. On macOS, the app bundle is also installed under `Applications/Spotifast.app` in the package output.
+
+Playback requires Spotify Premium. Sign-in requires a Spotify developer Client ID; follow the [upstream setup guide](https://spotifast.rocks/getting-started/). Use Nix to update this read-only installation, not the in-app updater. Optional Soloist playback can download a separate player outside Nix; choose the built-in player to avoid that download.
 
 ## Brave updates
 

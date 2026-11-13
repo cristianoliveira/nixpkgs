@@ -4,9 +4,9 @@ let
   system = stdenv.hostPlatform.system;
   platforms = [ "aarch64-linux" "x86_64-linux" "aarch64-darwin" ];
   appHashes = {
-    aarch64-linux = "sha256-LluwXEfP+60BitNCF+pMgWR21+uEJpL3QHmMkCDwKB4=";
-    x86_64-linux = "sha256-d7C+cqRsoUuzZzZaBBZGQfkUs6aXErrDkdOcVqlZvvQ=";
-    aarch64-darwin = "sha256-9d0LyBqp72HPv7bvn9v0/n9mTU7Gdu4NyI8TzJdZ0NA=";
+    aarch64-linux = "sha256-Dl/ZWgVkUuwx4y/mqlpHqLHUICCujzoQzaLgoQAdQSQ=";
+    x86_64-linux = "sha256-+Z4eBL6CwOELL2nudAPKNDhvSA2SUR31hlr0cD52Vd0=";
+    aarch64-darwin = "sha256-NjPqXYaOpBD4Tfu3eiYgXeMx9N9S/bP7AGsrOXhFhFk=";
   };
   target = if stdenv.isDarwin then "macos-aarch64" else if stdenv.isAarch64 then "linux-aarch64" else "linux-x86_64";
   core = (import ../herdr-core pkgs).herdr-core;
@@ -14,7 +14,7 @@ in
 {
   herdr-app = stdenv.mkDerivation rec {
     pname = "herdr-app";
-    version = "0.1.13";
+    version = "0.1.15";
     src = pkgs.fetchurl {
       url = "https://releases.herdr.dev/app/${version}/herdr-app-${target}.tar.gz";
       hash = appHashes.${system};

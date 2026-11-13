@@ -82,7 +82,7 @@ nix run github:cristianoliveira/nixpkgs#jeq -- version
 }
 ```
 
-`herdr-core` runs terminals independently of the desktop app; use `nix run .#herdr-core -- --help` or install it to access `hc`. The `herdr-app` command adds the same core package to PATH; this core is distinct from the `herdr` terminal runtime. On macOS, launching the app bundle directly bypasses that wrapper and may require a separate core installation. The app is available for Linux and Apple Silicon macOS. Upstream release builds enable telemetry by default; disable it in Settings → Privacy or set `HERDR_TELEMETRY=0`. Upstream also checks for updates and can download a core outside Nix when requested.
+`herdr-core` runs terminals independently of the desktop app; use `nix run .#herdr-core -- --help` or install it to access `hc`. The `herdr-app` command adds the same core package to PATH; this core is distinct from the `herdr` terminal runtime. On macOS, launching the app bundle directly bypasses that wrapper and may require a separate core installation. The app is packaged at version 0.1.15 for Linux and Apple Silicon macOS. Upstream release builds enable telemetry by default; disable it in Settings → Privacy or set `HERDR_TELEMETRY=0`. Upstream also checks for updates and can download a core outside Nix when requested.
 
 ## Spotifast
 
